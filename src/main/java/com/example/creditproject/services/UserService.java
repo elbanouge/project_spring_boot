@@ -11,4 +11,8 @@ public interface UserService {
 
     List<User> findAllUsers();
 
+    User updatePassworde(String password,String email);
+
+    public User updatePassword(String email);
+
 }

@@ -31,4 +31,20 @@ public class UserServiceImpl implements UserService {
     public List<User> findAllUsers() {
         return this.userRepository.findAll();
     }
+
+    @Override
+    public User updatePassworde(String password,String email) {
+        User u=userRepository.findByEmail(email).orElse(null);
+        u.setPassword(password);
+
+        return userRepository.save(u);
+    }
+
+    @Override
+    public User updatePassword(String email) {
+        User u=userRepository.findByEmail(email).orElse(null);
+        //u.setPassword(password);
+
+        return u;
+    }
 }
