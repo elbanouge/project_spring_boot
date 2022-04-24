@@ -37,6 +37,60 @@ public class User implements Serializable {
     @Column(name = "role")
     private String role;
 
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "cin")
+    private String cin;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "sexe")
+    private String sexe;
+
+    public String getSexe() {
+        return sexe;
+    }
+
+    public void setSexe(String sexe) {
+        this.sexe = sexe;
+    }
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getDateNai() {
+        return dateNai;
+    }
+
+    public void setDateNai(String dateNai) {
+        this.dateNai = dateNai;
+    }
+
+    @Column(name = "dateNai")
+    private String dateNai;
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getCin() {
+        return cin;
+    }
+
+    public void setCin(String cin) {
+        this.cin = cin;
+    }
+
     public Long getId() {
         return id;
     }
