@@ -49,7 +49,6 @@ public class UserController {
 
     @PutMapping("findByEmail/{email}")
     public ResponseEntity<?> find(@PathVariable String email,@RequestBody String password) {
-        //String password=user.getPassword();
 
         if (userService.findByEmail(email) == null) {
             return ResponseEntity.notFound().build();
