@@ -29,14 +29,17 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    @GetMapping("login/{email}")
-    public ResponseEntity<?> auth(@PathVariable String email) {
-        if (userService.findByEmail(email) == null) {
-            return ResponseEntity.notFound().build();
+    @PostMapping("login")
+    public ResponseEntity<?> auth(@RequestBody User user) {
+        if (userService.findByEmail(user.getEmail()) == null) {
+            return new ResponseEntity<>("email",HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(
-                userService.findByEmail(email),
-                HttpStatus.OK);
+        User u=userService.findByEmail(user.getEmail());
+        if(u.getPassword().equals(user.getPassword()))
+            return new ResponseEntity<>(u,HttpStatus.OK);
+        return new ResponseEntity<>("password",HttpStatus.NOT_FOUND);
+
+
     }
 
     @GetMapping("all")
@@ -65,5 +68,16 @@ public class UserController {
         return new ResponseEntity<>(
                 userService.updatePassword(email),
                 HttpStatus.OK);
+    }
+
+    @PostMapping("Personalinfos")
+    public ResponseEntity<?> Personalinfos(@RequestBody User user) {
+        //System.out.println(user.getFirstName());
+        if (userService.findByEmail(user.getEmail()) != null) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        user.setRole("user");
+        userService.save(user);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 }
