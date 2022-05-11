@@ -2,7 +2,7 @@ package com.example.creditproject.services;
 
 import java.util.List;
 
-import com.example.creditproject.models.User;
+import com.example.creditproject.entities.User;
 import com.example.creditproject.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +33,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updatePassworde(String password,String email) {
-        User u=userRepository.findByEmail(email).orElse(null);
+    public User updatePassworde(String password, String email) {
+        User u = userRepository.findByEmail(email).orElse(null);
         u.setPassword(password);
 
         return userRepository.save(u);
@@ -42,9 +42,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updatePassword(String email) {
-        User u=userRepository.findByEmail(email).orElse(null);
-        //u.setPassword(password);
+        User u = userRepository.findByEmail(email).orElse(null);
+        // u.setPassword(password);
 
         return u;
+    }
+
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id).orElse(null);
     }
 }

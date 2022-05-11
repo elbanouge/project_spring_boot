@@ -2,7 +2,7 @@ package com.example.creditproject.repositories;
 
 import java.util.Optional;
 
-import com.example.creditproject.models.User;
+import com.example.creditproject.entities.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

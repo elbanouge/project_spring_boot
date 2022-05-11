@@ -2,7 +2,7 @@ package com.example.creditproject.services;
 
 import java.util.List;
 
-import com.example.creditproject.models.User;
+import com.example.creditproject.entities.User;
 
 public interface UserService {
     User save(User user);
@@ -11,8 +11,10 @@ public interface UserService {
 
     List<User> findAllUsers();
 
-    User updatePassworde(String password,String email);
+    User updatePassworde(String password, String email);
 
     public User updatePassword(String email);
+
+    User findById(Long userId);
 
 }
