@@ -1,6 +1,6 @@
-package com.example.creditproject.controllers;
+package com.project.request_credit.controllers;
 
-import com.example.creditproject.models.Credit;
+import com.project.request_credit.models.Credit;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,23 +15,23 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "http://localhost:8100")
 public class SimulationController {
 
-    @PostMapping("/calculAnnuite")
-    public ResponseEntity<?> calculAnnuite(@RequestBody Credit credit) {
+    @PostMapping({ "calculMensualite" })
+    public ResponseEntity<?> calculMensualite(@RequestBody Credit credit) {
         double t = credit.getTaux() / 100;
         double c = credit.getCapital();
         int n = credit.getDuree();
 
         double tm = Math.pow(1 + t, (double) 1 / 12) - 1;
         double a = Math.pow(1 + tm, n) * tm * c / (Math.pow(1 + tm, n) - 1);
-        credit.setAnnuite(a);
+        credit.setMensualite(a);
 
         return new ResponseEntity<>(credit, HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/calculCapital")
+    @PostMapping({ "calculCapital" })
     public ResponseEntity<?> calculCapital(@RequestBody Credit credit) {
         double t = credit.getTaux() / 100;
-        double a = credit.getAnnuite();
+        double a = credit.getMensualite();
         int n = credit.getDuree();
 
         double tm = Math.pow(1 + t, (double) 1 / 12) - 1;
@@ -41,11 +41,11 @@ public class SimulationController {
         return new ResponseEntity<>(credit, HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/calculDuree")
+    @PostMapping({ "calculDuree" })
     public ResponseEntity<?> calculDuree(@RequestBody Credit credit) {
         double t = credit.getTaux() / 100;
         double c = credit.getCapital();
-        double a = credit.getAnnuite();
+        double a = credit.getMensualite();
 
         double tm = Math.pow(1 + t, (double) 1 / 12) - 1;
         double n = Math.log(a / (a - (tm * c))) / Math.log(1 + tm);

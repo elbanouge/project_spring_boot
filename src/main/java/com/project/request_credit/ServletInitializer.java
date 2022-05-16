@@ -1,4 +1,4 @@
-package com.example.creditproject;
+package com.project.request_credit;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

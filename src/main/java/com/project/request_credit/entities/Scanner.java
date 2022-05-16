@@ -1,4 +1,4 @@
-package com.example.creditproject.entities;
+package com.project.request_credit.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,26 +7,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Table(name = "images")
-public class Image {
+@Table(name = "scanners")
+@AllArgsConstructor
+@NoArgsConstructor
+public class Scanner {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "url", unique = true)
     private String url;
-
     @Column(name = "result", columnDefinition = "TEXT")
     private String result;
-
-    @Column(name = "user_id")
-    private Long userId;
-
-    public Image() {
-    }
 }

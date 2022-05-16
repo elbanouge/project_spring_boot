@@ -1,4 +1,4 @@
-package com.example.creditproject.services;
+package com.project.request_credit.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -18,7 +18,7 @@ public class EmailSenderService {
         message.setText(body);
         message.setSubject(subject);
         mailSender.send(message);
-        System.out.println("mail sent ............");
+        System.out.println("Email sent successfully!");
         return true;
     }
 

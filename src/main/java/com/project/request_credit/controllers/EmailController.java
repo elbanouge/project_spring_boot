@@ -1,16 +1,15 @@
-package com.example.creditproject.controllers;
+package com.project.request_credit.controllers;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Random;
 
-import com.example.creditproject.entities.User;
-import com.example.creditproject.models.Email;
-import com.example.creditproject.services.EmailSenderService;
-import com.example.creditproject.services.UserService;
+import com.project.request_credit.entities.User;
+import com.project.request_credit.models.Email;
+import com.project.request_credit.services.AccountService;
+import com.project.request_credit.services.EmailSenderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,29 +27,29 @@ public class EmailController {
     @Autowired
     EmailSenderService emailSenderService;
     @Autowired
-    UserService userService;
+    AccountService userService;
 
-    @PostMapping("sendOTP")
+    @PostMapping({ "sendOTP" })
     public ResponseEntity<?> sendEmailAvecOTP(@RequestBody Email email) {
         Random rand = new Random();
         int otp = rand.nextInt(999999);
 
         email.setMessage(email.getMessage() + " " + otp);
         boolean bool = emailSenderService.sendEmail(email.getEmail(), email.getSubject(), email.getMessage());
-        User user = userService.findByEmail(email.getEmail());
+        User user = userService.findUserByEmail(email.getEmail());
 
         if (bool == true && user != null) {
             System.out.println(user.toString());
             user.setOtp(otp);
             user.setOtpExpiry(new Date());
-            userService.save(user);
+            userService.updateUser(user);
 
             return ResponseEntity.ok("Email sent successfully");
         } else
             return ResponseEntity.badRequest().body("Email not sent");
     }
 
-    @PostMapping("sendEmail")
+    @PostMapping({ "sendEmail" })
     public ResponseEntity<?> sendEmail(@RequestBody Email email) {
         boolean bool = emailSenderService.sendEmail(email.getEmail(), email.getSubject(), email.getMessage());
         if (bool)
@@ -59,20 +58,16 @@ public class EmailController {
             return ResponseEntity.badRequest().body("Email not sent");
     }
 
-    @PostMapping("verifyOTP")
-    public ResponseEntity<?> verifyOTP(@RequestBody Long otp) {
-        return new ResponseEntity<>(otp, HttpStatus.OK);
-    }
-
-    @GetMapping("verifyOTP/{email}/{otp}")
+    @GetMapping({ "verifyOTP/{email}/{otp}" })
     public ResponseEntity<?> verifierOTP(@PathVariable String email, @PathVariable int otp) {
-        User user = userService.findByEmail(email);
+        User user = userService.findUserByEmail(email);
         if (user != null) {
             if (user.getOtp() == otp) {
                 if (user.getOtpExpiry().toInstant().isAfter(new Date().toInstant().minus(5, ChronoUnit.MINUTES))) {
                     user.setOtp(0);
                     user.setOtpExpiry(null);
-                    userService.save(user);
+                    user.setStatus("ACTIVE");
+                    userService.updateUser(user);
                     return ResponseEntity.ok("OTP verified successfully");
                 } else
                     return ResponseEntity.badRequest().body("OTP expired");
