@@ -271,7 +271,7 @@ public class ImageParseService {
     }
 
     public String OCROldCINVerso(User user, String result) {
-        return null;
+        return null; // TODO
     }
 
     public String ocrRIB(User user, String result) {
