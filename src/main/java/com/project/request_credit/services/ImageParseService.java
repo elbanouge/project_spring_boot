@@ -271,7 +271,7 @@ public class ImageParseService {
     }
 
     public String OCROldCINVerso(User user, String result) {
-        return null; // TODO : OCROldCINVerso : OCROldCINVerso Oc
+        return null; // TODO : OCROldCINVerso for old CIN
     }
 
     public String ocrRIB(User user, String result) {
