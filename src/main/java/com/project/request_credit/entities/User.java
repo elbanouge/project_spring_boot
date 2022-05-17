@@ -21,12 +21,14 @@ import org.hibernate.annotations.OnDeleteAction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Entity
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class User {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,7 +51,7 @@ public class User {
         private Date otpExpiry;
         private String status;
 
-        @ManyToMany(fetch = FetchType.LAZY)
+        @ManyToMany(fetch = FetchType.EAGER)
         @JoinTable(name = "users_roles", joinColumns = {
                         @JoinColumn(name = "user_id")
         }, inverseJoinColumns = {
@@ -58,7 +60,7 @@ public class User {
         @OnDelete(action = OnDeleteAction.CASCADE)
         private Set<Role> roles = new HashSet<>();
 
-        @ManyToMany(fetch = FetchType.LAZY)
+        @ManyToMany(fetch = FetchType.EAGER)
         @JoinTable(name = "users_scanners", joinColumns = {
                         @JoinColumn(name = "user_id")
         }, inverseJoinColumns = {

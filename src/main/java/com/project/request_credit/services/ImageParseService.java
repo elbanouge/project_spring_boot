@@ -129,7 +129,7 @@ public class ImageParseService {
         Mat resultMat = new Mat();
         Imgproc.threshold(destination, resultMat, 55, 255, Imgproc.THRESH_BINARY);
         Imgcodecs.imwrite(resRes + resPath, resultMat);
-        return resDes + resPath;
+        return resRes + resPath;
     }
 
     public String ocrNewCINVerso(User user, String result) {
@@ -315,5 +315,4 @@ public class ImageParseService {
         return result + "\n\n nom : " + nom + "\n prenom : " + prenom + "\n rib : " +
                 rib + "\n banque : " + banque;
     }
-
 }

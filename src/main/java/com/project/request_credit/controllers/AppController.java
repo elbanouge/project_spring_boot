@@ -35,7 +35,13 @@ public class AppController {
                     "0615761546", "JE295844", "89 BLOC E LOT TIZNIT",
                     true, dateformat.parse("24/12/1995"), "OUIJJNAE",
                     0, null, null, new HashSet<>(), new HashSet<>());
+            User user2 = new User(null, "Abdellah", "Elbanouge", "banouge2",
+                    "abde23", "abde.banouge2@gmail.com",
+                    "0615761546", "JE295844", "89 BLOC E LOT TIZNIT",
+                    true, dateformat.parse("24/12/1995"), "OUIJJNAE",
+                    0, null, null, new HashSet<>(), new HashSet<>());
             accountService.createNewUser(user);
+            accountService.createNewUser(user2);
 
         } catch (Exception e) {
             System.out.println("Error while creating" + e.getMessage());
