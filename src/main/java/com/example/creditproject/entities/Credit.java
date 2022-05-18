@@ -1,0 +1,91 @@
+package com.example.creditproject.entities;
+
+import lombok.Data;
+
+import javax.persistence.*;
+
+@Data
+@Entity
+@Table(name = "credit")
+public class Credit {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column
+    private double capital;
+
+    @Column
+    private int duree;
+
+    @Column
+    private double taux=7.4;
+
+    @Column
+    private double mensualite;
+
+    @Column
+    private String creditdate;
+
+    @ManyToOne
+    @JoinColumn(name="userid")
+    private User user;
+
+
+    public double getCapital() {
+        return capital;
+    }
+
+    public void setCapital(double capital) {
+        this.capital = capital;
+    }
+
+    public int getDuree() {
+        return duree;
+    }
+
+    public void setDuree(int duree) {
+        this.duree = duree;
+    }
+
+    public double getTaux() {
+        return taux;
+    }
+
+    public void setTaux(double taux) {
+        this.taux = taux;
+    }
+
+    public double getMensualite() {
+        return mensualite;
+    }
+
+    public void setMensualite(double mensualite) {
+        this.mensualite = mensualite;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getCreditdate() {
+        return creditdate;
+    }
+
+    public void setCreditdate(String creditdate) {
+        this.creditdate = creditdate;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+}

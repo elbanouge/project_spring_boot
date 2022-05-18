@@ -11,10 +11,15 @@ public interface UserService {
 
     List<User> findAllUsers();
 
-    User updatePassworde(String password, String email);
+    User updatePassword(String password,String email);
 
     public User updatePassword(String email);
 
+    public void delete(Long id);
+    public void deleteAll();
+
     User findById(Long userId);
+
+    public void deleteByEmail(String email);
 
 }
