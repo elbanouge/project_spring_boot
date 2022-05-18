@@ -1,6 +1,5 @@
 package com.project.request_credit.controllers;
 
-import java.security.Principal;
 import java.util.List;
 
 import com.project.request_credit.entities.Role;
@@ -12,7 +11,6 @@ import com.project.request_credit.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -119,9 +117,7 @@ public class AccountController {
     }
 
     @GetMapping({ "/profile" })
-    public User profile(Principal principal) {
-        UserDetails uDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = accountService.findUserByUsername(uDetails.getUsername());
-        return user;
+    public User profile() {
+        return userDetailsService.profile();
     }
 }

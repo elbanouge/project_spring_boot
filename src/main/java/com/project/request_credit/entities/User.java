@@ -51,6 +51,7 @@ public class User {
         private Date otpExpiry;
         private String status;
         private String processInstanceId;
+        private String taskId;
 
         @ManyToMany(fetch = FetchType.EAGER)
         @JoinTable(name = "users_roles", joinColumns = {

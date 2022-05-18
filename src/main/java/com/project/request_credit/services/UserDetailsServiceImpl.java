@@ -1,9 +1,12 @@
 package com.project.request_credit.services;
 
+import java.security.Principal;
+
 import com.project.request_credit.entities.User;
 import com.project.request_credit.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,6 +27,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         return new MyUserDetails(user);
+    }
+
+    public User profile() {
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails uDetails = loadUserByUsername(principal.getName());
+        User user = userRepository.findByUsername(uDetails.getUsername()).orElse(null);
+        return user;
     }
 
 }
