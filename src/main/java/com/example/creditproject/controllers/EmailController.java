@@ -30,24 +30,41 @@ public class EmailController {
     @Autowired
     UserService userService;
 
+    // @PostMapping("sendOTP")
+    // public ResponseEntity<?> sendEmailAvecOTP(@RequestBody Email email) {
+    //     Random rand = new Random();
+    //     int otp = rand.nextInt(999999);
+
+    //     email.setMessage(email.getMessage() + " " + otp);
+    //     boolean bool = emailSenderService.sendEmail(email.getEmail(), email.getSubject(), email.getMessage());
+    //     User user = userService.findByEmail(email.getEmail());
+
+    //     if (bool == true && user != null) {
+    //         System.out.println(user.toString());
+    //         user.setOtp(otp);
+    //         user.setOtpExpiry(new Date());
+    //         userService.save(user);
+
+    //         return ResponseEntity.ok("Email sent successfully");
+    //     } else
+    //         return ResponseEntity.badRequest().body("Email not sent");
+    // }
+    private int otp;
+
     @PostMapping("sendOTP")
-    public ResponseEntity<?> sendEmailAvecOTP(@RequestBody Email email) {
+    public ResponseEntity<String> sendEmailAvecOTP(@RequestBody Email email) {
         Random rand = new Random();
         int otp = rand.nextInt(999999);
 
         email.setMessage(email.getMessage() + " " + otp);
         boolean bool = emailSenderService.sendEmail(email.getEmail(), email.getSubject(), email.getMessage());
-        User user = userService.findByEmail(email.getEmail());
-
-        if (bool == true && user != null) {
-            System.out.println(user.toString());
-            user.setOtp(otp);
-            user.setOtpExpiry(new Date());
-            userService.save(user);
-
-            return ResponseEntity.ok("Email sent successfully");
-        } else
-            return ResponseEntity.badRequest().body("Email not sent");
+        if (bool)
+        {
+            this.otp=otp;
+            return ResponseEntity.ok("envoyé");
+        }
+        else
+            return ResponseEntity.badRequest().body("non envoyé");
     }
 
     @PostMapping("sendEmail")
@@ -60,10 +77,15 @@ public class EmailController {
     }
 
     @PostMapping("verifyOTP")
-    public ResponseEntity<?> verifyOTP(@RequestBody Long otp) {
-        return new ResponseEntity<>(otp, HttpStatus.OK);
+    public ResponseEntity<String> verifyOTP(@RequestBody int receivedOtp) {
+       
+        if (receivedOtp==otp)
+        {
+            return ResponseEntity.ok("match");
+        }
+        else
+            return  ResponseEntity.badRequest().body("no match");
     }
-
     @GetMapping("verifyOTP/{email}/{otp}")
     public ResponseEntity<?> verifierOTP(@PathVariable String email, @PathVariable int otp) {
         User user = userService.findByEmail(email);

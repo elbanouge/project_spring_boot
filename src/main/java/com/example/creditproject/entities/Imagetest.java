@@ -11,8 +11,8 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "images")
-public class Image {
+@Table(name = "imagesas")
+public class Imagetest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,6 @@ public class Image {
     @Column(name = "user_id")
     private Long userId;
 
-    public Image() {
+    public Imagetest() {
     }
 }
