@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import com.example.creditproject.entities.Image;
+import com.example.creditproject.entities.Imagetest;
 import com.example.creditproject.entities.User;
 import com.example.creditproject.models.OCR;
 import com.example.creditproject.repositories.ImageRespository;
@@ -52,12 +52,12 @@ public class ImageParseService {
         }
     }
 
-    public Image save(Image image) {
+    public Imagetest save(Imagetest image) {
         imageRespository.save(image);
         return image;
     }
 
-    public String saveImageOCR(Image image, OCR ocr) {
+    public String saveImageOCR(Imagetest image, OCR ocr) {
         String result = parseImage(ocr.getImage(), ocr.getDestinationLanguage());
         if (result == null || result.equals("Error while reading image")) {
             return "Error";
@@ -70,19 +70,19 @@ public class ImageParseService {
         }
     }
 
-    public Image findByUrl(String url) {
+    public Imagetest findByUrl(String url) {
         return imageRespository.findByUrl(url);
     }
 
-    public List<Image> findAll() {
+    public List<Imagetest> findAll() {
         return imageRespository.findAll();
     }
 
-    public void delete(Image image) {
+    public void delete(Imagetest image) {
         imageRespository.delete(image);
     }
 
-    public Image findById(Long id) {
+    public Imagetest findById(Long id) {
         return imageRespository.findById(id).orElse(null);
     }
 
@@ -188,9 +188,9 @@ public class ImageParseService {
 
         User user2 = new User();
         user2.setDateNai(dateNaiss);
-        user2.setLieuNai(lieuNaiss);
+        //user2.setLieuNai(lieuNaiss);
 
-        if (user.getDateNai().equals(user2.getDateNai()) && user.getLieuNai().equals(user2.getLieuNai())) {
+        if (user.getDateNai().equals(user2.getDateNai())){// && user.getLieuNai().equals(user2.getLieuNai())) {
             return "OK \n\n" + user2.toString();
         } else {
             return "KO \n\n" + user2.toString();

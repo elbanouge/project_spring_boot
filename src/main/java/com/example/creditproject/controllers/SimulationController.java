@@ -3,6 +3,7 @@ package com.example.creditproject.controllers;
 import com.example.creditproject.entities.User;
 import com.example.creditproject.models.Credit;
 
+
 import com.example.creditproject.services.CreditServices;
 import com.example.creditproject.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +19,30 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "http://localhost:8100")
 public class SimulationController {
-    @Autowired
-    UserService userService;
+
     @Autowired
     CreditServices creditServices;
-    @PostMapping("/calculAnnuite")
-    public ResponseEntity<?> calculAnnuite(@RequestBody Credit credit) {
+
+    @Autowired
+    UserService userService;
+
+    @PostMapping("/calculMensualite")
+    public ResponseEntity<?> calculMensualite(@RequestBody Credit credit) {
         double t = credit.getTaux() / 100;
         double c = credit.getCapital();
         int n = credit.getDuree();
 
         double tm = Math.pow(1 + t, (double) 1 / 12) - 1;
         double a = Math.pow(1 + tm, n) * tm * c / (Math.pow(1 + tm, n) - 1);
-        credit.setAnnuite(a);
+        credit.setMensualite(Math.round(a));
+
+        int max = credit.getMaxDuree();
+        a = Math.pow(1 + tm, max) * tm * c / (Math.pow(1 + tm, max) - 1);
+        credit.setMaxMensualite(Math.round(a));
+
+        int min = credit.getMinDuree();
+        a = Math.pow(1 + tm, min) * tm * c / (Math.pow(1 + tm, min) - 1);
+        credit.setMinMensualite(Math.round(a));
 
         return new ResponseEntity<>(credit, HttpStatus.ACCEPTED);
     }
@@ -38,7 +50,7 @@ public class SimulationController {
     @PostMapping("/calculCapital")
     public ResponseEntity<?> calculCapital(@RequestBody Credit credit) {
         double t = credit.getTaux() / 100;
-        double a = credit.getAnnuite();
+        double a = credit.getMensualite();
         int n = credit.getDuree();
 
         double tm = Math.pow(1 + t, (double) 1 / 12) - 1;
@@ -52,7 +64,7 @@ public class SimulationController {
     public ResponseEntity<?> calculDuree(@RequestBody Credit credit) {
         double t = credit.getTaux() / 100;
         double c = credit.getCapital();
-        double a = credit.getAnnuite();
+        double a = credit.getMensualite();
 
         double tm = Math.pow(1 + t, (double) 1 / 12) - 1;
         double n = Math.log(a / (a - (tm * c))) / Math.log(1 + tm);
@@ -60,6 +72,7 @@ public class SimulationController {
 
         return new ResponseEntity<>(credit, HttpStatus.ACCEPTED);
     }
+
 
     @GetMapping("all")
     public List<com.example.creditproject.entities.Credit> getAllContacts()

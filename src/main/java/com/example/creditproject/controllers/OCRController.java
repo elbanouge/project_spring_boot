@@ -3,7 +3,7 @@ package com.example.creditproject.controllers;
 import java.io.IOException;
 import java.util.List;
 
-import com.example.creditproject.entities.Image;
+import com.example.creditproject.entities.Imagetest;
 import com.example.creditproject.entities.User;
 import com.example.creditproject.models.OCR;
 import com.example.creditproject.services.ImageParseService;
@@ -35,8 +35,8 @@ public class OCRController {
 	@PostMapping("parse")
 	public ResponseEntity<?> OCR(@RequestBody OCR ocr) throws IOException,
 			TesseractException {
-		Image image = new Image();
-		Image imagePath = imageParseService.findByUrl(ocr.getImage());
+		Imagetest image = new Imagetest();
+		Imagetest imagePath = imageParseService.findByUrl(ocr.getImage());
 
 		if (imagePath != null) {
 			String res = imageParseService.saveImageOCR(imagePath, ocr);
@@ -54,7 +54,7 @@ public class OCRController {
 
 	@PostMapping("OCR_CIN_Verso")
 	public ResponseEntity<?> OCRCINVerso(@RequestBody OCR ocr) {
-		Image image = imageParseService.findByUrl(ocr.getImage());
+		Imagetest image = imageParseService.findByUrl(ocr.getImage());
 
 		if (image == null) {
 			return new ResponseEntity<>("Image not found", HttpStatus.NOT_FOUND);
@@ -71,7 +71,7 @@ public class OCRController {
 
 	@PostMapping("OCR_CIN_Recto")
 	public ResponseEntity<?> OCRCINRecto(@RequestBody OCR ocr) {
-		Image image = imageParseService.findByUrl(ocr.getImage());
+		Imagetest image = imageParseService.findByUrl(ocr.getImage());
 
 		if (image == null) {
 			return new ResponseEntity<>("Image not found", HttpStatus.NOT_FOUND);
@@ -88,13 +88,13 @@ public class OCRController {
 
 	@GetMapping("all")
 	public ResponseEntity<?> allOCR() {
-		List<Image> images = imageParseService.findAll();
+		List<Imagetest> images = imageParseService.findAll();
 		return new ResponseEntity<>(images, HttpStatus.OK);
 	}
 
 	@DeleteMapping("delete/{id}")
 	public ResponseEntity<?> deleteOCR(@PathVariable Long id) {
-		Image image = imageParseService.findById(id);
+		Imagetest image = imageParseService.findById(id);
 		if (image == null) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} else {
@@ -105,7 +105,7 @@ public class OCRController {
 
 	@PostMapping({ "/OCR_Bulletin_Paie" })
 	public ResponseEntity<?> ocrBulletinPaie(@RequestBody OCR ocr) {
-		Image image = imageParseService.findByUrl(ocr.getImage());
+		Imagetest image = imageParseService.findByUrl(ocr.getImage());
 
 		if (image == null) {
 			return new ResponseEntity<>("Image not found", HttpStatus.NOT_FOUND);
@@ -117,7 +117,7 @@ public class OCRController {
 
 	@PostMapping({ "/OCR_RIB" })
 	public ResponseEntity<?> ocrRIB(@RequestBody OCR ocr) {
-		Image image = imageParseService.findByUrl(ocr.getImage());
+		Imagetest image = imageParseService.findByUrl(ocr.getImage());
 		String res = imageParseService.saveImageOCR(image, ocr);
 		if (res.equals("Error")) {
 			return new ResponseEntity<>("Error while parsing image", HttpStatus.BAD_REQUEST);

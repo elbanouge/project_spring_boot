@@ -86,21 +86,5 @@ public class EmailController {
         else
             return  ResponseEntity.badRequest().body("no match");
     }
-    @GetMapping("verifyOTP/{email}/{otp}")
-    public ResponseEntity<?> verifierOTP(@PathVariable String email, @PathVariable int otp) {
-        User user = userService.findByEmail(email);
-        if (user != null) {
-            if (user.getOtp() == otp) {
-                if (user.getOtpExpiry().toInstant().isAfter(new Date().toInstant().minus(5, ChronoUnit.MINUTES))) {
-                    user.setOtp(0);
-                    user.setOtpExpiry(null);
-                    userService.save(user);
-                    return ResponseEntity.ok("OTP verified successfully");
-                } else
-                    return ResponseEntity.badRequest().body("OTP expired");
-            } else
-                return ResponseEntity.badRequest().body("OTP not verified");
-        } else
-            return ResponseEntity.badRequest().body("User not found");
-    }
+
 }
