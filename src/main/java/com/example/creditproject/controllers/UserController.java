@@ -1,14 +1,13 @@
 package com.example.creditproject.controllers;
 
 import com.example.creditproject.entities.User;
+
 import java.util.List;
 
-import com.example.creditproject.entities.User;
 import com.example.creditproject.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,13 +65,13 @@ public class UserController {
         return userService.findAllUsers();// ResponseEntity.ok(userService.findAllUsers());
     }
 
-    @PutMapping("findByEmail/{email}")
-    public ResponseEntity<?> find(@PathVariable String email, @RequestBody String password) {
+    @PutMapping("changePassword/{email}")
+    public ResponseEntity<?> changePassword(@PathVariable String email, @RequestBody String password) {
         // String password=user.getPassword();
 
-        if (userService.findByEmail(email) == null) {
-            return ResponseEntity.notFound().build();
-        }
+        //if (userService.findByEmail(email) == null) {
+        //return ResponseEntity.notFound().build();
+        //}
         return new ResponseEntity<>(
                 userService.updatePassword(password, email),
                 HttpStatus.OK);
@@ -85,7 +84,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
         return new ResponseEntity<>(
-                userService.updatePassword(email),
+                userService.findByEmail(email),
                 HttpStatus.OK);
     }
     @PostMapping("Personalinfos")
