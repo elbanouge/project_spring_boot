@@ -14,7 +14,6 @@ import com.project.request_credit.services.ScannerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +28,6 @@ import net.sourceforge.tess4j.TesseractException;
 
 @RequestMapping("/api/ocr")
 @RestController
-@CrossOrigin(origins = "http://localhost:8100")
 public class OCRController {
 
 	@Autowired
@@ -47,28 +45,33 @@ public class OCRController {
 			TesseractException {
 		try {
 			String res = "";
-			String path = imageParseService.getPathImage(file);
-			String resPath = imageParseService.cleanImage(path);
-			System.out.println(resPath);
-			OCR ocr = new OCR();
-			ocr.setId_user(Long.parseLong(id_user.toString()));
-			ocr.setDestinationLanguage(lang);
-			ocr.setImage(resPath);
+			String resPath = imageParseService.getPathImage(file);
+			// String resPath = imageParseService.cleanImage(path, "result");
+			if (!resPath.equals("Error")) {
+				System.out.println(resPath);
+				OCR ocr = new OCR();
+				ocr.setId_user(Long.parseLong(id_user.toString()));
+				ocr.setDestinationLanguage(lang);
+				ocr.setImage(resPath);
 
-			Scanner newScanner = new Scanner();
-			Scanner scannerExist = scannerService.getScannerByUrl(ocr.getImage());
+				Scanner newScanner = new Scanner();
+				Scanner scannerExist = scannerService.getScannerByUrl(ocr.getImage());
 
-			if (scannerExist != null) {
-				res = imageParseService.saveImageOCR(scannerExist, ocr);
-				return new ResponseEntity<>(res, HttpStatus.OK);
-			} else {
-				res = imageParseService.saveImageOCR(newScanner, ocr);
-				if (res.equals("Error")) {
-					return new ResponseEntity<>("Error", HttpStatus.BAD_GATEWAY);
-				} else {
+				if (scannerExist != null) {
+					res = imageParseService.saveImageOCR(scannerExist, ocr);
 					return new ResponseEntity<>(res, HttpStatus.OK);
+				} else {
+					res = imageParseService.saveImageOCR(newScanner, ocr);
+					if (res.equals("Error")) {
+						return new ResponseEntity<>("Error", HttpStatus.BAD_GATEWAY);
+					} else {
+						return new ResponseEntity<>(res, HttpStatus.OK);
+					}
 				}
+			} else {
+				return new ResponseEntity<>("Error", HttpStatus.BAD_GATEWAY);
 			}
+
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -77,7 +80,7 @@ public class OCRController {
 	@PostMapping({ "scan" })
 	public ResponseEntity<?> scan(@RequestParam("file") MultipartFile file) {
 		String path = imageParseService.getPathImage(file);
-		imageParseService.cleanImage(path);
+		imageParseService.cleanImage(path, "destination");
 		return new ResponseEntity<>("Scan done", HttpStatus.OK);
 	}
 
@@ -99,13 +102,8 @@ public class OCRController {
 
 	@DeleteMapping({ "delete/{id}" })
 	public ResponseEntity<?> deleteOCR(@PathVariable Long id) {
-		Scanner image = scannerService.findById(id);
-		if (image == null) {
-			return new ResponseEntity<>("Image not found", HttpStatus.NOT_FOUND);
-		} else {
-			scannerService.delete(image);
-			return new ResponseEntity<>("Image deleted", HttpStatus.OK);
-		}
+		scannerService.deleteById(id);
+		return new ResponseEntity<>("Image deleted", HttpStatus.OK);
 	}
 
 	@PostMapping({ "OCR_NEW_CIN_Verso" })
@@ -119,8 +117,9 @@ public class OCRController {
 			if (user == null) {
 				return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
 			} else {
-				String res = imageParseService.ocrNewCINVerso(user, image.getResult());
-				return new ResponseEntity<>("CIN Verso \n" + res + "\n\n" + user.toString(), HttpStatus.OK);
+				String res = imageParseService.ocrNewCINVerso(image.getResult());
+				String resCompare = imageParseService.compareUsers(res, ocr.getId_user());
+				return new ResponseEntity<>(resCompare, HttpStatus.OK);
 			}
 		}
 	}
@@ -136,8 +135,8 @@ public class OCRController {
 			if (user == null) {
 				return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
 			} else {
-				String res = imageParseService.ocrNewCINRecto(user, image.getResult());
-				return new ResponseEntity<>("CIN Recto \n" + res + "\n\n" + user.toString(), HttpStatus.OK);
+				String res = imageParseService.ocrNewCINRecto(image.getResult());
+				return new ResponseEntity<>(res, HttpStatus.OK);
 			}
 		}
 	}
@@ -153,8 +152,25 @@ public class OCRController {
 			if (user == null) {
 				return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
 			} else {
-				String res = imageParseService.OCROldCINVerso(user, image.getResult());
-				return new ResponseEntity<>("CIN Verso \n" + res + "\n\n" + user.toString(), HttpStatus.OK);
+				String res = imageParseService.OCROldCINVerso(image.getResult());
+				return new ResponseEntity<>(res, HttpStatus.OK);
+			}
+		}
+	}
+
+	@PostMapping({ "OCR_Old_CIN_Recto" })
+	public ResponseEntity<?> OCROldCINRecto(@RequestBody OCR ocr) {
+		Scanner image = scannerService.getScannerByUrl(ocr.getImage());
+
+		if (image == null) {
+			return new ResponseEntity<>("Image not found", HttpStatus.NOT_FOUND);
+		} else {
+			User user = accountService.findById(ocr.getId_user());
+			if (user == null) {
+				return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+			} else {
+				String res = imageParseService.OCROldCINRecto(image.getResult());
+				return new ResponseEntity<>(res, HttpStatus.OK);
 			}
 		}
 	}
@@ -173,13 +189,18 @@ public class OCRController {
 
 	@PostMapping({ "OCR_RIB" })
 	public ResponseEntity<?> ocrRIB(@RequestBody OCR ocr) {
+		String res = "";
 		Scanner image = scannerService.getScannerByUrl(ocr.getImage());
-		String res = imageParseService.saveImageOCR(image, ocr);
-		if (res.equals("Error")) {
-			return new ResponseEntity<>("Error while parsing image", HttpStatus.BAD_REQUEST);
+		if (image == null) {
+			return new ResponseEntity<>("Image not found", HttpStatus.NOT_FOUND);
 		} else {
-			String res2 = imageParseService.ocrRIB(null, res);
-			return new ResponseEntity<>(res2, HttpStatus.OK);
+			res = imageParseService.saveImageOCR(image, ocr);
+			if (res.equals("Error")) {
+				return new ResponseEntity<>("Error while parsing image", HttpStatus.BAD_REQUEST);
+			} else {
+				String result = imageParseService.ocrRIB(res);
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
 		}
 	}
 }

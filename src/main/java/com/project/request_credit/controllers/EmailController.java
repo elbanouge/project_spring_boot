@@ -11,7 +11,6 @@ import com.project.request_credit.services.EmailSenderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/api/email")
 @RestController
-@CrossOrigin(origins = "http://localhost:8100")
 public class EmailController {
 
     @Autowired
@@ -63,7 +61,8 @@ public class EmailController {
         User user = userService.findUserByEmail(email);
         if (user != null) {
             if (user.getOtp() == otp) {
-                if (user.getOtpExpiry().toInstant().isAfter(new Date().toInstant().minus(5, ChronoUnit.MINUTES))) {
+                if (user.getOtpExpiry().toInstant().isAfter(new Date().toInstant().minus(5,
+                        ChronoUnit.MINUTES))) {
                     user.setOtp(0);
                     user.setOtpExpiry(null);
                     user.setStatus("ACTIVE");
@@ -73,7 +72,8 @@ public class EmailController {
                     return ResponseEntity.badRequest().body("OTP expired");
             } else
                 return ResponseEntity.badRequest().body("OTP not verified");
-        } else
+        } else {
             return ResponseEntity.badRequest().body("User not found");
+        }
     }
 }

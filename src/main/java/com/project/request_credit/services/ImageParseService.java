@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import javax.imageio.ImageIO;
 
@@ -72,7 +71,8 @@ public class ImageParseService {
             User user = accountService.findById(ocr.getId_user());
 
             if (user != null) {
-                image.setUrl(ocr.getImage());
+                String url = ocr.getImage();
+                image.setUrl(url);
                 image.setResult(result.trim());
                 Scanner scanner = scannerService.saveScanner(image);
 
@@ -108,7 +108,7 @@ public class ImageParseService {
         return res;
     }
 
-    public String cleanImage(String path) {
+    public String cleanImage(String path, String type) {
         String resPath = path.split("/")[path.split("/").length - 1];
         String resDes = "./src/main/resources/images/destination";
         String resRes = "./src/main/resources/images/result";
@@ -129,16 +129,26 @@ public class ImageParseService {
         Mat resultMat = new Mat();
         Imgproc.threshold(destination, resultMat, 55, 255, Imgproc.THRESH_BINARY);
         Imgcodecs.imwrite(resRes + resPath, resultMat);
-        return resRes + resPath;
+
+        if (type.equals("destination")) {
+            resDes.replace("destination", "");
+            return resDes + resPath;
+        } else if (type.equals("result")) {
+            resDes.replace("result", "");
+            return resRes + resPath;
+        } else {
+            return "Error";
+        }
     }
 
-    public String ocrNewCINVerso(User user, String result) {
+    public String ocrNewCINVerso(String result) {
+        String res = "";
 
-        String cin = "";
-        String nom = "";
-        String prenom = "";
-        String adresse = "";
-        String sexe = "";
+        String cin = "aucun";
+        String nom = "aucun";
+        String prenom = "aucun";
+        String adresse = "aucun";
+        String sexe = "aucun";
 
         String[] lines = result.split("\n");
         String line1 = "";
@@ -168,62 +178,52 @@ public class ImageParseService {
             }
         }
 
-        for (int i = 0; i < line4.length(); i++) {
-            if (line4.charAt(i) == 'M') {
-                sexe += "Masculin";
-                break;
-            } else if (line4.charAt(i) == 'F') {
-                sexe += "Feminin";
-                break;
-            }
-        }
-
-        System.out.println("***" + line1);
-        System.out.println("***" + line2);
-        System.out.println("***" + line3);
-        System.out.println("*****line4*****" + line4);
-
-        if (line1.length() > 0 && line2.length() > 0 && line3.length() > 0 && line4.length() > 0) {
+        if (line1.length() > 0) {
             String[] line1Split = line1.split("<");
             cin = line1Split[1].substring(1);
+        }
 
+        if (line2.length() > 0) {
             String[] line2Split = line2.split("<<");
             nom = line2Split[0];
             prenom = line2Split[1];
-
-            if (line3.isEmpty()) {
-                adresse = "";
-            } else {
-                adresse = line3.substring(8);
+            if (nom.contains("<") || nom.contains(">") || prenom.contains("<") || prenom.contains(">")) {
+                nom = nom.replace("<", " ");
+                nom = nom.replace(">", " ");
+                prenom = prenom.replace("<", " ");
+                prenom = prenom.replace(">", " ");
             }
         }
 
-        System.out.println("***" + cin);
-        System.out.println("***" + nom);
-        System.out.println("***" + prenom);
-        System.out.println("***" + adresse);
-        System.out.println("***" + sexe);
-
-        User user2 = new User();
-        user2.setCin(cin);
-        user2.setFirstName(prenom);
-        user2.setLastName(nom);
-        user2.setAddress(adresse);
-
-        if (user.getFirstName().equals(user2.getFirstName())
-                && user.getLastName().equals(user2.getLastName()) &&
-                user.getCin().equals(user2.getCin())
-                && user.getAddress().equals(user2.getAddress())) {
-            return "OK \n\n" + user2.toString();
-        } else {
-            return "KO \n\n" + user2.toString();
+        if (line3.length() > 0) {
+            String adr = "";
+            String[] line3Split = line3.split(" ");
+            for (int i = 1; i < line3Split.length; i++) {
+                if (line3Split[i].length() > 0) {
+                    adr += line3Split[i] + " ";
+                }
+            }
+            adresse = adr;
         }
+
+        if (line4.length() > 0) {
+            if (line4.contains("M")) {
+                sexe = "M";
+            } else {
+                sexe = "F";
+            }
+        }
+
+        res = "CIN : " + cin + "\nNom : " + nom + "\nPrenom : " + prenom + "\nAdresse : " + adresse + "\nSexe : "
+                + sexe;
+        return res;
     }
 
-    public String ocrNewCINRecto(User user, String result) throws ParseException {
+    public String ocrNewCINRecto(String result) throws ParseException {
+        String res = "";
 
-        String dateNaiss = "";
-        String lieuNaiss = "";
+        String dateNaiss = "aucun";
+        String lieuNaiss = "aucun";
 
         String[] lines = result.split("\n");
         String line1 = "";
@@ -231,50 +231,188 @@ public class ImageParseService {
 
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].contains("à ")) {
-                line1 = lines[i + 1];
+                line1 = lines[i];
                 break;
             }
         }
 
         for (int i = 0; i < lines.length; i++) {
-            if (lines[i].contains("Néle")) {
+            if (lines[i].contains("N") && lines[i].contains("le")) {
                 line2 = lines[i];
                 break;
             }
         }
 
-        System.out.println("***" + line1);
-        System.out.println("***" + line2);
+        System.out.println("line1 : " + line1);
+        System.out.println("line2 : " + line2);
 
-        if (line1.length() > 0 && line2.length() > 0) {
+        if (line1.length() > 0) {
             lieuNaiss = line1.replaceAll("[^A-Z]+", " ");
+        }
+
+        if (line2.length() > 0) {
+            String date = "";
 
             String[] line2Split = line2.replaceAll("[^0-9]+", " ").split(" ");
-            dateNaiss = line2Split[1] + "/" + line2Split[2] + "/" + line2Split[3];
+            for (int i = 0; i < line2Split.length; i++) {
+                if (line2Split[i].length() > 0 && line2Split[i].length() > 1) {
+                    date += line2Split[i] + " ";
+                }
+            }
+            dateNaiss = date;
         }
 
-        System.out.println("***" + dateNaiss);
-        System.out.println("***" + lieuNaiss);
+        res = "Lieu de naissance : " + lieuNaiss + "\nDate de naissance : " + dateNaiss;
+        return res;
+    }
 
-        User user2 = new User();
-        SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
-        user2.setDate_naissance(dateformat.parse(dateNaiss));
-        user2.setLieu_naissance(lieuNaiss);
+    public String OCROldCINRecto(String result) {
+        String res = "";
+        String nom = "aucun";
+        String prenom = "aucun";
+        String dateNaiss = "aucun";
+        String lieuNaiss = "aucun";
+        String dateCINVal = "aucun";
 
-        int res = user.getDate_naissance().compareTo(user2.getDate_naissance());
+        String[] lines = result.split("\n");
+        String line1 = "";
+        String line2 = "";
+        String line3 = "";
+        String line4 = "";
 
-        if (res == 0 && user.getLieu_naissance().trim().equals(user2.getLieu_naissance().trim())) {
-            return "OK \n\n" + user2.toString();
-        } else {
-            return "KO \n\n" + user2.toString();
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("le") && lines[i].contains("N")) {
+                line1 = lines[i];
+                break;
+            }
         }
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("à ")) {
+                line2 = lines[i];
+                break;
+            }
+        }
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("au ")) {
+                line3 = lines[i];
+                break;
+            }
+        }
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("[A-Z]+")) {
+                line4 = lines[i];
+                break;
+            }
+        }
+
+        System.out.println("line1 : " + line1);
+        System.out.println("line2 : " + line2);
+        System.out.println("line3 : " + line3);
+        System.out.println("line4 : " + line4);
+
+        if (line1.length() > 0) {
+            String date = "";
+
+            String[] line1Split = line1.replaceAll("[^0-9]+", " ").split(" ");
+            for (int i = 0; i < line1Split.length; i++) {
+                if (line1Split[i].length() > 0 && line1Split[i].length() > 1) {
+                    date += line1Split[i] + " ";
+                }
+            }
+            dateNaiss = date;
+        }
+
+        if (line2.length() > 0) {
+            lieuNaiss = line2.replaceAll("[^A-Z]+", " ");
+        }
+
+        if (line3.length() > 0) {
+            dateCINVal = line3.replaceAll("[^0-9]+", " ");
+        }
+
+        res = "Date de naissance : " + dateNaiss + "\nLieu de naissance : " + lieuNaiss + "\nDate de validité : "
+                + dateCINVal + "\nNom : " + nom + "\nPrenom : " + prenom;
+        return res;
     }
 
-    public String OCROldCINVerso(User user, String result) {
-        return null;
+    public String OCROldCINVerso(String result) {
+        String res = "";
+        String cin = "aucun";
+        String adresse = "aucun";
+        String sexe = "aucun";
+
+        String[] lines = result.split("\n");
+        String line1 = "";
+        String line2 = "";
+        String line3 = "";
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("N°")) {
+                line1 = lines[i];
+                break;
+            }
+        }
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("Adresse") || lines[i].contains("Adr")) {
+                line2 = lines[i];
+                break;
+            }
+        }
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("Sexe") || lines[i].contains("exe")) {
+                line3 = lines[i];
+                break;
+            }
+        }
+
+        System.out.println("line1 : " + line1);
+        System.out.println("line2 : " + line2);
+        System.out.println("line3 : " + line3);
+
+        if (line1.length() > 0) {
+            String[] line1Split = line1.split(" ");
+            for (int i = 0; i < line1Split.length; i++) {
+                if (line1Split[i].length() > 0 && line1Split[i].startsWith("N")) {
+                    if (line1Split[i + 1].length() == 0) {
+                        cin = line1Split[i + 2];
+                    } else {
+                        cin = line1Split[i + 1];
+                    }
+                }
+            }
+        }
+
+        if (line2.length() > 0) {
+            String adr = "";
+            String[] line2Split = line2.split(" ");
+            for (int i = 1; i < line2Split.length; i++) {
+                if (line2Split[i].length() > 0) {
+                    adr += line2Split[i] + " ";
+                }
+            }
+            adresse = adr;
+        }
+
+        if (line3.length() > 0) {
+            if (line3.contains("M")) {
+                sexe = "M";
+            } else {
+                sexe = "F";
+            }
+        }
+
+        res = "CIN : " + cin + "\nAdresse : " + adresse + "\nSexe : " + sexe;
+        return res;
     }
 
-    public String ocrRIB(User user, String result) {
+    public String ocrRIB(String result) {
+        String res = "";
+
         String nom = "";
         String prenom = "";
         String rib = "";
@@ -286,7 +424,7 @@ public class ImageParseService {
 
         String[] lines = result.split("\n");
         for (int i = 0; i < lines.length; i++) {
-            if (lines[i].contains("Intitulé du compte")) {
+            if (lines[i].contains("Intitul")) {
                 line1 = lines[i];
             } else if (lines[i].contains("RIB")) {
                 line2 = lines[i + 1];
@@ -310,9 +448,49 @@ public class ImageParseService {
             }
         }
 
-        System.out.println("\n nom : " + nom + "\n prenom : " + prenom + "\n rib : "
-                + rib + "\n banque : " + banque);
-        return result + "\n\n nom : " + nom + "\n prenom : " + prenom + "\n rib : " +
-                rib + "\n banque : " + banque;
+        res += "nom : " + nom + "\n" + "prenom : " + prenom + "\n" + "rib : " + rib + "\n" + "banque : " + banque;
+
+        System.out.println("***" + res);
+        return res;
+    }
+
+    public String compareUsers(String info, Long id_user) {
+        String res = "";
+        boolean bol = false;
+        User user = accountService.findById(id_user);
+        if (user != null) {
+
+            String CIN = info.split("\n")[0].split(":")[1].trim();
+            String Nom = info.split("\n")[1].split(":")[1].trim();
+            String Prenom = info.split("\n")[2].split(":")[1].trim();
+            String Adresse = info.split("\n")[3].split(":")[1].trim();
+            String Sexe = info.split("\n")[4].split(":")[1].trim();
+
+            if (CIN.equals(user.getCin())) {
+                res += "CIN user and CIN OCR are the same \n";
+                bol = true;
+            }
+            if (Nom.toLowerCase().equals(user.getLastName().toLowerCase())) {
+                res += "Nom user and Nom OCR are the same \n";
+                bol = true;
+            }
+            if (Prenom.toLowerCase().equals(user.getFirstName().toLowerCase())) {
+                res += "Prenom user and Prenom OCR are the same \n";
+                bol = true;
+            }
+            if (Adresse.toLowerCase().equals(user.getAddress().toLowerCase())) {
+                res += "Adresse user and Adresse OCR are the same \n";
+                bol = true;
+            }
+            if (Sexe.equals("M") && user.getSexe() == true || Sexe.equals("F") && user.getSexe() == false) {
+                res += "Sexe user and Sexe OCR are the same \n";
+                bol = true;
+            }
+
+            if (!bol) {
+                res = "Info OCR and user are different \n";
+            }
+        }
+        return res;
     }
 }
