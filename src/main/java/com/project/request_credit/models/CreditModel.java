@@ -9,7 +9,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Credit {
+public class CreditModel {
     private double capital;
     private int duree;
     private double taux;

@@ -27,4 +27,6 @@ public interface AccountService {
 
     public User findById(Long id);
 
+    public boolean deleteUser(Long id);
+
 }

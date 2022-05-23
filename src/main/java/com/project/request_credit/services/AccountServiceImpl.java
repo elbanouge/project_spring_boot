@@ -39,15 +39,15 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public User createNewUser(User user) {
         User userExist = findUserByUsername(user.getUsername());
-        if (userExist != null) {
-            userRepository.save(user);
-            return userExist;
-        } else {
+        if (userExist == null) {
             Role userRole = roleRepository.findRoleByName("USER");
             user.setRoles((Set.of(userRole)));
             user.setStatus("DISABLED");
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+
             return userRepository.save(user);
+        } else {
+            return userExist;
         }
     }
 
@@ -117,5 +117,16 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Role findRoleByName(String name) {
         return roleRepository.findRoleByName(name);
+    }
+
+    @Override
+    public boolean deleteUser(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            userRepository.delete(user);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

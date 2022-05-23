@@ -47,6 +47,14 @@ public class User {
         private Boolean sexe;
         private Date date_naissance;
         private String lieu_naissance;
+
+        // more fields
+        private String nationalite;
+        private boolean client;
+        private boolean fonctionnaire;
+        private String mensuel;
+
+        // more fields
         private int otp;
         private Date otpExpiry;
         private String status;

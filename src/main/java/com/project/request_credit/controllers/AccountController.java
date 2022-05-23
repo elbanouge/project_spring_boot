@@ -11,6 +11,7 @@ import com.project.request_credit.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,20 +38,6 @@ public class AccountController {
         } else {
             Role newRole = accountService.createNewRole(role);
             return new ResponseEntity<>(newRole, HttpStatus.OK);
-        }
-    }
-
-    @PostMapping({ "registration" })
-    public ResponseEntity<?> register(@RequestBody User user) {
-        User userExist = accountService.findUserByEmail(user.getEmail());
-        User userExistUsername = accountService.findUserByUsername(user.getUsername());
-        if (userExist != null) {
-            return new ResponseEntity<>("Email is already in use!", HttpStatus.BAD_REQUEST);
-        } else if (userExistUsername != null) {
-            return new ResponseEntity<>("Username is already in use!", HttpStatus.BAD_REQUEST);
-        } else {
-            User userCreated = accountService.createNewUser(user);
-            return new ResponseEntity<>(userCreated, HttpStatus.OK);
         }
     }
 
@@ -93,14 +80,27 @@ public class AccountController {
         }
     }
 
-    @PutMapping({ "Personalinfos" })
+    @PostMapping({ "registration" })
     public ResponseEntity<?> Personalinfos(@RequestBody User user) {
-        User userFromDb = accountService.findUserByEmail(user.getEmail());
-        if (userFromDb != null) {
-            accountService.updateUser(userFromDb);
-            return new ResponseEntity<>(userFromDb, HttpStatus.OK);
+        User userExist = accountService.findUserByEmail(user.getEmail());
+        User userExistUsername = accountService.findUserByUsername(user.getUsername());
+        if (userExist != null) {
+            return new ResponseEntity<>("Email is already in use!", HttpStatus.BAD_REQUEST);
+        } else if (userExistUsername != null) {
+            return new ResponseEntity<>("Username is already in use!", HttpStatus.BAD_REQUEST);
         } else {
+            User userCreated = accountService.createNewUser(user);
+            return new ResponseEntity<>(userCreated, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("findByEmail/{email}")
+    public ResponseEntity<?> find(@PathVariable String email) {
+        User user = accountService.findUserByEmail(email);
+        if (user == null) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(user, HttpStatus.OK);
         }
     }
 
@@ -117,5 +117,15 @@ public class AccountController {
     @GetMapping({ "/profile" })
     public User profile() {
         return userDetailsService.profile();
+    }
+
+    @DeleteMapping({ "delete/{id}" })
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        boolean bol = accountService.deleteUser(id);
+        if (bol == true) {
+            return new ResponseEntity<>("User deleted", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User not deleted", HttpStatus.BAD_REQUEST);
+        }
     }
 }

@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -25,4 +27,9 @@ public class Credit {
     private int duree;
     private double taux;
     private double mensualite;
+    private String date;
+
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    private User user;
 }
