@@ -13,12 +13,12 @@ public class EmailSenderService {
 
     public boolean sendEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("abde.banouge1@gmail.com");
+        message.setFrom("laylaelhajjaji@gmail.com ");
         message.setTo(toEmail);
         message.setText(body);
         message.setSubject(subject);
         mailSender.send(message);
-        System.out.println("Email sent successfully!");
+        System.out.println("mail sent ............");
         return true;
     }
 

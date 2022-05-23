@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CreditRepository extends CrudRepository<Credit, Long> {
+
     List<Credit> findCreditsByUser(User user);
 
     Credit findByUser(User user);

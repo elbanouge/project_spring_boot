@@ -11,15 +11,11 @@ import com.project.request_credit.services.EmailSenderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/email")
 @RestController
+//@CrossOrigin(origins = "*")
 public class EmailController {
 
     @Autowired
@@ -27,34 +23,26 @@ public class EmailController {
     @Autowired
     AccountService userService;
 
-    @PostMapping({ "sendOTP" })
-    public ResponseEntity<?> sendEmailAvecOTP(@RequestBody Email email) {
-        Random rand = new Random();
-        int otp = rand.nextInt(999999);
+//    @PostMapping({ "sendOTP" })
+//    public ResponseEntity<?> sendEmailAvecOTP(@RequestBody Email email) {
+//        Random rand = new Random();
+//        int otp = rand.nextInt(999999);
+//
+//        email.setMessage(email.getMessage() + " " + otp);
+//        boolean bool = emailSenderService.sendEmail(email.getEmail(), email.getSubject(), email.getMessage());
+//        User user = userService.findUserByEmail(email.getEmail());
+//
+//        if (bool == true && user != null) {
+//            System.out.println(user.toString());
+//            user.setOtp(otp);
+//            user.setOtpExpiry(new Date());
+//            userService.updateUser(user);
+//
+//            return ResponseEntity.ok("Email sent successfully");
+//        } else
+//            return ResponseEntity.badRequest().body("Email not sent");
+//    }
 
-        email.setMessage(email.getMessage() + " " + otp);
-        boolean bool = emailSenderService.sendEmail(email.getEmail(), email.getSubject(), email.getMessage());
-        User user = userService.findUserByEmail(email.getEmail());
-
-        if (bool == true && user != null) {
-            System.out.println(user.toString());
-            user.setOtp(otp);
-            user.setOtpExpiry(new Date());
-            userService.updateUser(user);
-
-            return ResponseEntity.ok("Email sent successfully");
-        } else
-            return ResponseEntity.badRequest().body("Email not sent");
-    }
-
-    @PostMapping({ "sendEmail" })
-    public ResponseEntity<?> sendEmail(@RequestBody Email email) {
-        boolean bool = emailSenderService.sendEmail(email.getEmail(), email.getSubject(), email.getMessage());
-        if (bool)
-            return ResponseEntity.ok("Email sent successfully");
-        else
-            return ResponseEntity.badRequest().body("Email not sent");
-    }
 
     @GetMapping({ "verifyOTP/{email}/{otp}" })
     public ResponseEntity<?> verifierOTP(@PathVariable String email, @PathVariable int otp) {
@@ -75,5 +63,43 @@ public class EmailController {
         } else {
             return ResponseEntity.badRequest().body("User not found");
         }
+    }
+
+    private int otp;
+
+    @PostMapping("sendOTP")
+    public ResponseEntity<String> sendEmailAvecOTP(@RequestBody Email email) {
+        Random rand = new Random();
+        int otp = rand.nextInt(999999);
+
+        email.setMessage(email.getMessage() + " " + otp);
+        boolean bool = emailSenderService.sendEmail(email.getEmail(), email.getSubject(), email.getMessage());
+        if (bool)
+        {
+            this.otp=otp;
+            return ResponseEntity.ok("envoyé");
+        }
+        else
+            return ResponseEntity.badRequest().body("non envoyé");
+    }
+
+    @PostMapping("verifyOTP")
+    public ResponseEntity<String> verifyOTP(@RequestBody int receivedOtp) {
+
+        if (receivedOtp==otp)
+        {
+            return ResponseEntity.ok("match");
+        }
+        else
+            return  ResponseEntity.badRequest().body("no match");
+    }
+
+    @PostMapping("sendEmail")
+    public ResponseEntity<?> sendEmail(@RequestBody Email email) {
+        boolean bool = emailSenderService.sendEmail(email.getEmail(), email.getSubject(), email.getMessage());
+        if (bool)
+            return ResponseEntity.ok("Email sent successfully");
+        else
+            return ResponseEntity.badRequest().body("Email not sent");
     }
 }

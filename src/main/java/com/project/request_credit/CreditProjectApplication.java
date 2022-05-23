@@ -10,7 +10,7 @@ public class CreditProjectApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CreditProjectApplication.class, args);
-		OpenCV.loadShared();
+		//OpenCV.loadShared();
 		System.out.println("******* Credit Project Application Started ********");
 	}
 

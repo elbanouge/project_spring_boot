@@ -16,37 +16,40 @@ public class CreditService {
     @Autowired
     private CreditRepository creditRepository;
 
-    public Credit addCredit(Credit credit, User user) {
-        credit.setUser(user);
-        return creditRepository.save(credit);
+    public Credit addCredit(Credit Credit)
+    {
+        return creditRepository.save(Credit);
     }
 
     public List<Credit> getAllCredit() {
         return (List<Credit>) creditRepository.findAll();
     }
 
-    public Credit getCreditById(long id) {
+    public Credit getCreditById(long id)
+    {
         return creditRepository.findById(id).orElse(null);
     }
 
-    public void deleteCredit(long id) {
-        boolean found = creditRepository.existsById(id);
-        if (found == true)
+    public void deleteCredit(long id)
+    {
+        boolean found=creditRepository.existsById(id);
+        if(found==true)
             creditRepository.deleteById(id);
     }
 
-    public Credit updateCredit(Credit credit, long id) {
-        boolean found = creditRepository.existsById(id);
-        if (found == true)
-            return creditRepository.save(credit);
+    public Credit updateCredit(Credit Credit,long id)
+    {
+        boolean found=creditRepository.existsById(id);
+        if(found==true)
+            return creditRepository.save(Credit);
         return null;
     }
-
-    public List<Credit> CreditByidUser(User id) {
-        return creditRepository.findCreditsByUser(id);
+    public List<Credit> CreditByidUser(User id){
+        return  creditRepository.findCreditsByUser(id);
     }
 
-    public Credit OneCreditByidUser(User id) {
-        return creditRepository.findByUser(id);
+    public Credit OneCreditByidUser(User id){
+        return  creditRepository.findByUser(id);
     }
+
 }

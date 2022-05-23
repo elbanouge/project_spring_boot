@@ -98,16 +98,16 @@ public class AccountServiceImpl implements AccountService {
         return userRepository.findByUsername(username).orElse(null);
     }
 
-    @Override
-    public User updatePassword(String password, String email) {
-        User user = userRepository.findByEmail(email).orElse(null);
-        if (user != null) {
-            user.setPassword(password);
-            return userRepository.save(user);
-        } else {
-            return null;
-        }
-    }
+//    @Override
+//    public User updatePassword(String password, String email) {
+//        User user = userRepository.findByEmail(email).orElse(null);
+//        if (user != null) {
+//            user.setPassword(password);
+//            return userRepository.save(user);
+//        } else {
+//            return null;
+//        }
+//    }
 
     @Override
     public User findById(Long id) {
@@ -129,4 +129,58 @@ public class AccountServiceImpl implements AccountService {
             return false;
         }
     }
+
+    @Override
+    public User save(User user) {
+        userRepository.save(user);
+        return user;
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    @Override
+    public List<User> findAllUsers() {
+        return this.userRepository.findAll();
+    }
+
+    @Override
+    public User updatePassword(String password,String email) {
+        User u=userRepository.findByEmail(email).orElse(null);
+        u.setPassword(password);
+
+        return userRepository.save(u);
+    }
+
+    @Override
+    public User updatePassword(String email) {
+        User u=userRepository.findByEmail(email).orElse(null);
+        //u.setPassword(password);
+
+        return u;
+    }
+
+    @Override
+    public void delete(Long id) {
+        userRepository.deleteById(id);
+    }
+    @Override
+    public void deleteAll() {
+        userRepository.deleteAll();
+    }
+
+
+    @Override
+    public void deleteByEmail(String email) {
+        User u=userRepository.findByEmail(email).orElse(null);
+        if(u!=null){
+            userRepository.deleteByEmail(email);
+        }
+
+    }
+
+
 }
+

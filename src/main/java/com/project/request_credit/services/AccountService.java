@@ -29,4 +29,21 @@ public interface AccountService {
 
     public boolean deleteUser(Long id);
 
+    User save(User user);
+
+    User findByEmail(String email);
+
+    List<User> findAllUsers();
+
+    //User updatePassword(String password,String email);
+
+    public User updatePassword(String email);
+
+    public void delete(Long id);
+    public void deleteAll();
+
+    //User findById(Long userId);
+
+    public void deleteByEmail(String email);
+
 }
