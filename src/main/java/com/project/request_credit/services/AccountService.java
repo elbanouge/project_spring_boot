@@ -14,6 +14,7 @@ public interface AccountService {
     public boolean updateUser(User user);
 
     public boolean addRoleToUser(String username, String name);
+    //public boolean addRole1ToUser(String name);
 
     public List<User> getAllUsers();
 

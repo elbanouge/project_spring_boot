@@ -52,6 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/simulation/**").permitAll()
                 .antMatchers("/api/credit/**").permitAll()
                 .antMatchers("/api/user/registration/**").permitAll()
+                .antMatchers("/api/user/Personalinfos/**").permitAll()
                 // .antMatchers("/api/ocr/all").hasAnyAuthority("USER", "ADMIN")
                 .anyRequest().authenticated()
                 .and()

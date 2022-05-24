@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -44,8 +45,9 @@ public class User {
         private String phone;
         private String cin;
         private String address;
-        private Boolean sexe;
-        private Date date_naissance;
+        private String sexe;
+        @JsonFormat(pattern="dd/MM/yyyy")
+        private Date dateNai;
         //private String lieu_naissance;
 
         // more fields
@@ -78,4 +80,180 @@ public class User {
         })
         @OnDelete(action = OnDeleteAction.CASCADE)
         private Set<Scanner> scanners = new HashSet<>();
+
+        public Long getId() {
+                return id;
+        }
+
+        public void setId(Long id) {
+                this.id = id;
+        }
+
+        public String getFirstName() {
+                return firstName;
+        }
+
+        public void setFirstName(String firstName) {
+                this.firstName = firstName;
+        }
+
+        public String getLastName() {
+                return lastName;
+        }
+
+        public void setLastName(String lastName) {
+                this.lastName = lastName;
+        }
+
+        public String getUsername() {
+                return username;
+        }
+
+        public void setUsername(String username) {
+                this.username = username;
+        }
+
+        public String getPassword() {
+                return password;
+        }
+
+        public void setPassword(String password) {
+                this.password = password;
+        }
+
+        public String getEmail() {
+                return email;
+        }
+
+        public void setEmail(String email) {
+                this.email = email;
+        }
+
+        public String getPhone() {
+                return phone;
+        }
+
+        public void setPhone(String phone) {
+                this.phone = phone;
+        }
+
+        public String getCin() {
+                return cin;
+        }
+
+        public void setCin(String cin) {
+                this.cin = cin;
+        }
+
+        public String getAddress() {
+                return address;
+        }
+
+        public void setAddress(String address) {
+                this.address = address;
+        }
+
+        public String getSexe() {
+                return sexe;
+        }
+
+        public void setSexe(String sexe) {
+                this.sexe = sexe;
+        }
+
+        public Date getDateNai() {
+                return dateNai;
+        }
+
+        public void setDateNai(Date dateNai) {
+                this.dateNai = dateNai;
+        }
+
+        public String getNationalite() {
+                return nationalite;
+        }
+
+        public void setNationalite(String nationalite) {
+                this.nationalite = nationalite;
+        }
+
+        public boolean isClient() {
+                return client;
+        }
+
+        public void setClient(boolean client) {
+                this.client = client;
+        }
+
+        public boolean isFonctionnaire() {
+                return fonctionnaire;
+        }
+
+        public void setFonctionnaire(boolean fonctionnaire) {
+                this.fonctionnaire = fonctionnaire;
+        }
+
+        public String getMensuel() {
+                return mensuel;
+        }
+
+        public void setMensuel(String mensuel) {
+                this.mensuel = mensuel;
+        }
+
+        public int getOtp() {
+                return otp;
+        }
+
+        public void setOtp(int otp) {
+                this.otp = otp;
+        }
+
+        public Date getOtpExpiry() {
+                return otpExpiry;
+        }
+
+        public void setOtpExpiry(Date otpExpiry) {
+                this.otpExpiry = otpExpiry;
+        }
+
+        public String getStatus() {
+                return status;
+        }
+
+        public void setStatus(String status) {
+                this.status = status;
+        }
+
+        public String getProcessInstanceId() {
+                return processInstanceId;
+        }
+
+        public void setProcessInstanceId(String processInstanceId) {
+                this.processInstanceId = processInstanceId;
+        }
+
+        public String getTaskId() {
+                return taskId;
+        }
+
+        public void setTaskId(String taskId) {
+                this.taskId = taskId;
+        }
+
+        public Set<Role> getRoles() {
+                return roles;
+        }
+
+        public void setRoles(Set<Role> roles) {
+                this.roles = roles;
+        }
+
+        public Set<Scanner> getScanners() {
+                return scanners;
+        }
+
+        public void setScanners(Set<Scanner> scanners) {
+                this.scanners = scanners;
+        }
 }

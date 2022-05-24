@@ -69,6 +69,12 @@ public class CreditController {
 //        return creditService.updateCredit(credit1, id);
 //    }
 
+    @DeleteMapping("delete")
+    public ResponseEntity<?> deleteAll(){
+        creditService.deleteAll();
+        return new ResponseEntity<>("ok crediot", HttpStatus.OK);
+    }
+
     @PostMapping(value = "add")
     public Credit add(@RequestBody Credit credit)
     {

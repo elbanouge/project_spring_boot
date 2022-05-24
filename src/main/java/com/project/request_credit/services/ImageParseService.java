@@ -482,7 +482,7 @@ public class ImageParseService {
                 res += "Adresse user and Adresse OCR are the same \n";
                 bol = true;
             }
-            if (Sexe.equals("M") && user.getSexe() == true || Sexe.equals("F") && user.getSexe() == false) {
+            if (Sexe.equals("M") && user.getSexe() == "homme" || Sexe.equals("F") && user.getSexe() == "femme") {
                 res += "Sexe user and Sexe OCR are the same \n";
                 bol = true;
             }

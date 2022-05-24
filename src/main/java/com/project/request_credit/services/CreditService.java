@@ -52,4 +52,10 @@ public class CreditService {
         return  creditRepository.findByUser(id);
     }
 
+    //@Override
+    public void deleteAll() {
+        creditRepository.deleteAll();
+    }
+
+
 }

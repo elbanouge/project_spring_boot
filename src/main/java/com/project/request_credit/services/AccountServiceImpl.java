@@ -166,6 +166,8 @@ public class AccountServiceImpl implements AccountService {
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
+
+
     @Override
     public void deleteAll() {
         userRepository.deleteAll();

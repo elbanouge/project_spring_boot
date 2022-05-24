@@ -1,10 +1,14 @@
 package com.project.request_credit.controllers;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import com.project.request_credit.entities.Role;
 import com.project.request_credit.entities.User;
 import com.project.request_credit.models.UserRole;
+import com.project.request_credit.repositories.RoleRepository;
 import com.project.request_credit.services.AccountService;
 import com.project.request_credit.services.UserDetailsServiceImpl;
 
@@ -23,6 +27,9 @@ public class AccountController {
 
     @Autowired
     UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @PostMapping({ "createNewRole" })
     public ResponseEntity<?> createNewRole(@RequestBody Role role) {
@@ -183,8 +190,24 @@ public class AccountController {
         }
        // user.setRole("user");
         // user.setPassword("admin");
-        accountService.save(user);
-        //System.out.println(user.toString());
+        try{
+            //Set<Role> r=( Set<Role>) roleRepository.findRoleByName("USER");
+           // user.setRoles(r);
+            //SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
+//            Date date = new Date(user.getDateNai()+"");
+//           // String date=dateformat.format(user.getDateNai());
+//            System.out.println(date);
+//            String strDate= dateformat.format(date);
+//            System.out.println(strDate);
+//            user.setDateNai(dateformat.parse(user.getDateNai()+""));
+            System.out.println(user.toString());
+            user.setSexe(user.getSexe());
+            accountService.save(user);
+
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
@@ -192,6 +215,12 @@ public class AccountController {
     public ResponseEntity<?> delete(@PathVariable String email){
         accountService.deleteByEmail(email);
         return new ResponseEntity<>("ok", HttpStatus.OK);
+    }
+
+    @DeleteMapping("deletebyid/{id}")
+    public ResponseEntity<?> deletebyid(@PathVariable Long id){
+        Boolean c=accountService.deleteUser(id);
+        return new ResponseEntity<>(c, HttpStatus.OK);
     }
 
     @DeleteMapping("delete")
