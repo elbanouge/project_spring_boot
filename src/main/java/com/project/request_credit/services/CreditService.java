@@ -46,7 +46,7 @@ public class CreditService {
         return creditRepository.findCreditsByUser(id);
     }
 
-    public Credit OneCreditByidUser(User id) {
-        return creditRepository.findByUser(id);
+    public Credit getCreditByUser(User user) {
+        return creditRepository.findByUser(user);
     }
 }

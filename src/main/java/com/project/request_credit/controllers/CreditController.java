@@ -48,15 +48,21 @@ public class CreditController {
     }
 
     @PostMapping(value = "add/{username}")
-    public Credit add(
+    public ResponseEntity<?> add(
             @RequestBody Credit credit, @PathVariable String username) {
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("'demander le 'dd/MM/yyyy 'a' hh:mm");
         String format = formatter.format(date);
-        System.out.println(format);
+
         credit.setDate(format);
         User user = accountService.findUserByUsername(username);
-        return creditService.addCredit(credit, user);
+        if (user != null) {
+            credit.setUser(user);
+            Credit newCredit = creditService.addCredit(credit, user);
+            return new ResponseEntity<>(newCredit, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping(value = "update/{id}")
@@ -80,11 +86,15 @@ public class CreditController {
         return creditService.CreditByidUser(u);
     }
 
-    @GetMapping(value = "credit/{email}")
-    public Credit getByOneemail(@PathVariable String email) {
-        User u = accountService.findUserByEmail(email);
-
-        return creditService.OneCreditByidUser(u);
+    @GetMapping(value = "getCredit/{email}")
+    public ResponseEntity<?> getCreditByEmail(@PathVariable String email) {
+        User user = accountService.findUserByEmail(email);
+        Credit credit = creditService.getCreditByUser(user);
+        if (user != null && credit != null) {
+            return new ResponseEntity<>(credit, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Credit not found", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping(value = "getnombreCredit/{email}")

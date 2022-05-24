@@ -1,6 +1,5 @@
 package com.project.request_credit.controllers;
 
-import java.text.SimpleDateFormat;
 import java.util.HashSet;
 
 import javax.annotation.PostConstruct;
@@ -21,7 +20,7 @@ public class AppController {
     @PostConstruct
     public void init() {
         System.out.println("AccountController initialized");
-        SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
+        // SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
 
         try {
 
@@ -30,15 +29,15 @@ public class AppController {
             accountService.createNewRole(role1);
             accountService.createNewRole(role2);
 
-            User user = new User(null, "Abdellah", "Elbanouge", "banouge",
-                    "abde24", "abde.banouge@gmail.com",
+            User user = new User(null, "Abdellah", "Elbanouge", "abde.banouge2",
+                    "abde24", "abde.banouge2@gmail.com",
                     "0615761546", "JE295844", "89 BLOC E LOT TIZNIT", true,
-                    dateformat.parse("24/12/1995"), "OUIJJNAE",
+                    "24/12/1995", "OUIJJNAE",
                     null, false, false, null, 0, null, null, null, null, new HashSet<>(), new HashSet<>());
-            User user2 = new User(null, "Abdellah", "Elbanouge", "banouge2",
-                    "abde23", "abde.banouge2@gmail.com",
+            User user2 = new User(null, "Abdellah", "Elbanouge", "abde.banouge3",
+                    "abde23", "abde.banouge3@gmail.com",
                     "0615761546", "JE295844", "89 BLOC E LOT TIZNIT",
-                    true, dateformat.parse("24/12/1995"), "OUIJJNAE",
+                    true, "24/12/1995", "OUIJJNAE",
                     null, false, false, null, 0, null, null, null, null, new HashSet<>(), new HashSet<>());
             accountService.createNewUser(user);
             accountService.createNewUser(user2);

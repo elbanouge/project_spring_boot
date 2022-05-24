@@ -3,8 +3,10 @@ package com.project.request_credit.services;
 import java.util.List;
 import java.util.Set;
 
+import com.project.request_credit.entities.Credit;
 import com.project.request_credit.entities.Role;
 import com.project.request_credit.entities.User;
+import com.project.request_credit.repositories.CreditRepository;
 import com.project.request_credit.repositories.RoleRepository;
 import com.project.request_credit.repositories.UserRepository;
 
@@ -25,6 +27,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CreditRepository creditRepository;
 
     @Override
     public Role createNewRole(Role role) {
@@ -102,7 +107,7 @@ public class AccountServiceImpl implements AccountService {
     public User updatePassword(String password, String email) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user != null) {
-            user.setPassword(password);
+            user.setPassword(passwordEncoder.encode(password));
             return userRepository.save(user);
         } else {
             return null;
@@ -122,7 +127,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public boolean deleteUser(Long id) {
         User user = userRepository.findById(id).orElse(null);
-        if (user != null) {
+        Credit credit = creditRepository.findByUser(user);
+        // Credit credit = new Credit();
+        if (user != null && credit != null) {
+            creditRepository.delete(credit);
             userRepository.delete(user);
             return true;
         } else {

@@ -45,7 +45,7 @@ public class User {
         private String cin;
         private String address;
         private Boolean sexe;
-        private Date date_naissance;
+        private String date_naissance;
         private String lieu_naissance;
 
         // more fields

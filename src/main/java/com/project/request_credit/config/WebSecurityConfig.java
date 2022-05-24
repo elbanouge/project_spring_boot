@@ -4,7 +4,6 @@ import com.project.request_credit.services.UserDetailsServiceImpl;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -48,10 +47,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/login/**").permitAll()
+                .antMatchers("/login/**").permitAll()
                 .antMatchers("/api/simulation/**").permitAll()
-                .antMatchers("/api/credit/**").permitAll()
                 .antMatchers("/api/user/registration/**").permitAll()
+                // .antMatchers("/api/user/createPassword/**").permitAll()
                 // .antMatchers("/api/ocr/all").hasAnyAuthority("USER", "ADMIN")
                 .anyRequest().authenticated()
                 .and()

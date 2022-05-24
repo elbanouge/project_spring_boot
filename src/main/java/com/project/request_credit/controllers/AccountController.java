@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.project.request_credit.entities.Role;
 import com.project.request_credit.entities.User;
+import com.project.request_credit.models.PasswordEmail;
 import com.project.request_credit.models.UserRole;
 import com.project.request_credit.services.AccountService;
 import com.project.request_credit.services.UserDetailsServiceImpl;
@@ -104,9 +105,9 @@ public class AccountController {
         }
     }
 
-    @PutMapping({ "createPassword/{email}/{password}" })
-    public ResponseEntity<?> createPassword(@PathVariable String email, @PathVariable String password) {
-        User userUpdated = accountService.updatePassword(password, email);
+    @PostMapping({ "createPassword" })
+    public ResponseEntity<?> createPassword(@RequestBody PasswordEmail passwordEmail) {
+        User userUpdated = accountService.updatePassword(passwordEmail.getPassword(), passwordEmail.getEmail());
         if (userUpdated != null) {
             return new ResponseEntity<>(userUpdated, HttpStatus.OK);
         } else {
