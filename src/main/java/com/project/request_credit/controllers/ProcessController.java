@@ -44,6 +44,8 @@ public class ProcessController {
     @PostMapping({ "start-process" })
     @SuppressWarnings("unchecked")
     public ResponseEntity<?> startProcess(@RequestBody User user) {
+        if(accountService.findUserByEmail(user.getEmail())==null)  return new ResponseEntity<>("NOTFOUND", HttpStatus.NOT_FOUND);
+
         RestTemplate restTemplate = new RestTemplate();
 
         Map<String, HashMap<String, HashMap<String, Object>>> variables = CreateJson("name", user.getFirstName(),
@@ -60,7 +62,8 @@ public class ProcessController {
         String processInstanceId = (String) resultMap.get("id");
         System.out.println(processInstanceId);
 
-        User userConnected = userDetailsService.profile();
+        //User
+        User userConnected = accountService.findUserByEmail(user.getEmail());
         userConnected.setProcessInstanceId(processInstanceId);
         accountService.updateUser(userConnected);
 

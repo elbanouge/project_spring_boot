@@ -65,7 +65,12 @@ public class OCRController {
 					if (res.equals("Error")) {
 						return new ResponseEntity<>("Error", HttpStatus.BAD_GATEWAY);
 					} else {
-						return new ResponseEntity<>(res, HttpStatus.OK);
+						ResponseEntity<?> ok=new ResponseEntity("ok",HttpStatus.OK);
+						boolean recto=resPath.contains("CNIErecto");
+						boolean verso=resPath.contains("CNIEverso");
+						if(recto) ok=OCRNewCINRecto(ocr);
+						if(verso) ok=OCRNewCINVerso(ocr);
+						return new ResponseEntity<>(ok, HttpStatus.OK);
 					}
 				}
 			} else {
