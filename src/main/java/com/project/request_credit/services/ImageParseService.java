@@ -508,7 +508,6 @@ public class ImageParseService {
         String line2 = "";
         String line3 = "";
         String line4 = "";
-        String line5 = "";
 
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].toLowerCase().contains("ATTESTE PAR LA PRESENTE QUE".toLowerCase())) {
@@ -529,7 +528,7 @@ public class ImageParseService {
         }
 
         for (int i = 0; i < lines.length; i++) {
-            if (lines[i].toLowerCase().contains("DATE DE PAIEMENT".toLowerCase())) {
+            if (lines[i].toLowerCase().contains("ATTESTATION DE SALAIRE DU ".toLowerCase())) {
                 line4 = lines[i];
             }
         }
@@ -563,13 +562,19 @@ public class ImageParseService {
             salaire = df.format(Double.parseDouble(salaire) / 12) + "";
         }
 
+        if (line4.length() > 0) {
+            date = line4.replaceAll("[^0-9]+", " ").trim();
+            date = "DE " + date.split(" ")[0] + "/" + date.split(" ")[1] + "/" + date.split(" ")[2] + "AU "
+                    + date.split(" ")[3] + "/" + date.split(" ")[4] + "/" + date.split(" ")[5];
+        }
+
         System.out.println("line1 : " + line1);
         System.out.println("line2 : " + line2);
         System.out.println("line3 : " + line3);
         System.out.println("line4 : " + line4);
 
         res = "nom : " + nom + "\n" + "prenom : " + prenom + "\n" + "sexe : " + sexe + "\n" + "cin : " + cin + "\n"
-                + "salaire : " + salaire;
+                + "salaire : " + salaire + "\n" + "date : " + date;
         return res;
     }
 
@@ -631,10 +636,13 @@ public class ImageParseService {
                     res += "Lieu Naissance user and Lieu Naissance OCR are the same \n";
                     bol = true;
                 }
-                if (dateCINVal.toLowerCase().trim().equals(user.getDate_validite_cin().toLowerCase().trim())) {
-                    res += "Date CIN Val user and Date CIN Val OCR are the same \n";
-                    bol = true;
+                if (user.getDate_validite_cin() != null) {
+                    if (dateCINVal.toLowerCase().trim().equals(user.getDate_validite_cin().toLowerCase().trim())) {
+                        res += "Date CIN Val user and Date CIN Val OCR are the same \n";
+                        bol = true;
+                    }
                 }
+
             } else if (type.equals("CIN_Old_Verso")) {
 
                 CIN = info.split("\n")[0].split(":")[1].trim();
@@ -668,10 +676,13 @@ public class ImageParseService {
                     res += "Lieu Naissance user and Lieu Naissance OCR are the same \n";
                     bol = true;
                 }
-                if (dateCINVal.toLowerCase().trim().equals(user.getDate_validite_cin().toLowerCase().trim())) {
-                    res += "Date CIN Validity user and Date CIN Validity OCR are the same \n";
-                    bol = true;
+                if (user.getDate_validite_cin() != null) {
+                    if (dateCINVal.toLowerCase().trim().equals(user.getDate_validite_cin().toLowerCase().trim())) {
+                        res += "Date CIN Validity user and Date CIN Validity OCR are the same \n";
+                        bol = true;
+                    }
                 }
+
             }
 
             if (bol == false) {

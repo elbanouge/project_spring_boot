@@ -191,7 +191,7 @@ public class OCRController {
 			} else {
 				String res = imageParseService.ocrAttestationSalaire(image.getResult());
 				// String resCompare = imageParseService.compareInfoUserOCR(res,
-				// ocr.getId_user(), "CIN_Old_Recto");
+				// ocr.getId_user(), "OCR_Attestation_Salaire");
 				return new ResponseEntity<>(res, HttpStatus.OK);
 			}
 		}
@@ -199,17 +199,17 @@ public class OCRController {
 
 	@PostMapping({ "OCR_RIB" })
 	public ResponseEntity<?> ocrRIB(@RequestBody OCR ocr) {
-		String res = "";
 		Scanner image = scannerService.getScannerByUrl(ocr.getImage());
+
 		if (image == null) {
 			return new ResponseEntity<>("Image not found", HttpStatus.NOT_FOUND);
 		} else {
-			res = imageParseService.saveImageOCR(image, ocr);
-			if (res.equals("Error")) {
-				return new ResponseEntity<>("Error while parsing image", HttpStatus.BAD_REQUEST);
+			User user = accountService.findById(ocr.getId_user());
+			if (user == null) {
+				return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
 			} else {
-				String result = imageParseService.ocrRIB(res);
-				return new ResponseEntity<>(result, HttpStatus.OK);
+				String res = imageParseService.ocrRIB(image.getResult());
+				return new ResponseEntity<>(res, HttpStatus.OK);
 			}
 		}
 	}
