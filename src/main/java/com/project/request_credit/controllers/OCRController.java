@@ -41,12 +41,19 @@ public class OCRController {
 
 	@PostMapping({ "parse" })
 	public ResponseEntity<?> OCR(@RequestParam MultipartFile file, @RequestParam String lang,
-			@RequestParam String id_user) throws IOException,
+			@RequestParam String id_user, @RequestParam(required = false) Boolean clean) throws IOException,
 			TesseractException {
 		try {
 			String res = "";
-			String resPath = imageParseService.getPathImage(file);
-			// String resPath = imageParseService.cleanImage(path, "result");
+			String resPath = "";
+
+			resPath = imageParseService.getPathImage(file);
+
+			if (clean != null && clean == true) {
+				// destination // result
+				resPath = imageParseService.cleanImage(resPath, "result");
+			}
+
 			if (!resPath.equals("Error")) {
 				System.out.println(resPath);
 				OCR ocr = new OCR();

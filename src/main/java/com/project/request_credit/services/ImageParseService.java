@@ -241,7 +241,8 @@ public class ImageParseService {
         }
 
         for (int i = 0; i < lines.length; i++) {
-            if (lines[i].contains("N") && lines[i].contains("le")) {
+            if (lines[i].contains("N") && lines[i].contains("le")
+                    || lines[i].contains("Né")) {
                 line2 = lines[i];
                 break;
             }
