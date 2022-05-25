@@ -323,7 +323,11 @@ public class ImageParseService {
             String[] line1Split = line1.replaceAll("[^0-9]+", " ").split(" ");
             for (int i = 0; i < line1Split.length; i++) {
                 if (line1Split[i].length() > 0 && line1Split[i].length() > 1) {
-                    date += line1Split[i] + " ";
+                    if (i != line1Split.length - 1) {
+                        date += line1Split[i].trim() + "/";
+                    } else {
+                        date += line1Split[i].trim();
+                    }
                 }
             }
             dateNaiss = date;
@@ -334,7 +338,14 @@ public class ImageParseService {
         }
 
         if (line3.length() > 0) {
-            dateCINVal = line3.replaceAll("[^0-9]+", " ");
+            dateCINVal = line3.replaceAll("[^0-9]+", " ").trim();
+
+            for (int i = 0; i < dateCINVal.length(); i++) {
+                if (dateCINVal.charAt(i) == ' ') {
+                    dateCINVal = dateCINVal.replace(" ", "/");
+                    break;
+                }
+            }
         }
 
         res = "Date de naissance : " + dateNaiss + "\nLieu de naissance : " + lieuNaiss + "\nDate de validité : "
@@ -471,6 +482,7 @@ public class ImageParseService {
 
             String dateNaiss = "";
             String lieuNaiss = "";
+            // String dateCINVal = "";
 
             if (type.equals("CIN_NEW_Verso")) {
 
@@ -516,8 +528,37 @@ public class ImageParseService {
                 }
             } else if (type.equals("CIN_Old_Verso")) {
 
+                CIN = info.split("\n")[0].split(":")[1].trim();
+                Adresse = info.split("\n")[1].split(":")[1].trim();
+                Sexe = info.split("\n")[2].split(":")[1].trim();
+
+                if (CIN.trim().toLowerCase().equals(user.getCin().trim().toLowerCase())) {
+                    res += "CIN user and CIN OCR are the same \n";
+                    bol = true;
+                }
+                if (Adresse.trim().toLowerCase().equals(user.getAddress().trim().toLowerCase())) {
+                    res += "Adresse user and Adresse OCR are the same \n";
+                    bol = true;
+                }
+                if (Sexe.equals("M") && user.getSexe() == true || Sexe.equals("F") && user.getSexe() == false) {
+                    res += "Sexe user and Sexe OCR are the same \n";
+                    bol = true;
+                }
+
             } else if (type.equals("CIN_Old_Recto")) {
 
+                dateNaiss = info.split("\n")[0].split(":")[1].trim();
+                lieuNaiss = info.split("\n")[1].split(":")[1].trim();
+                // dateCINVal = info.split("\n")[2].split(":")[1].trim();
+
+                if (dateNaiss.toLowerCase().trim().equals(user.getDate_naissance().toLowerCase().trim())) {
+                    res += "Date de naissance user and Date de naissance OCR are the same \n";
+                    bol = true;
+                }
+                if (lieuNaiss.toLowerCase().trim().equals(user.getLieu_naissance().toLowerCase().trim())) {
+                    res += "Lieu Naissance user and Lieu Naissance OCR are the same \n";
+                    bol = true;
+                }
             }
 
             if (bol == false) {
