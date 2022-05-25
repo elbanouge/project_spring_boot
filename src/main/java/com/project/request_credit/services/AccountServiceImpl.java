@@ -72,6 +72,45 @@ public class AccountServiceImpl implements AccountService {
         return bol;
     }
 
+    public User upgradeUser(User user, Long id) {
+        User userExist = findById(id);
+
+        if (userExist != null) {
+
+            if (user.getFirstName() != null) {
+                userExist.setFirstName(user.getFirstName());
+            }
+            if (user.getLastName() != null) {
+                userExist.setLastName(user.getLastName());
+            }
+
+            if (user.getPhone() != null) {
+                userExist.setPhone(user.getPhone());
+            }
+            if (user.getCin() != null) {
+                userExist.setCin(user.getCin());
+            }
+            if (user.getAddress() != null) {
+                userExist.setAddress(user.getAddress());
+            }
+            if (user.getSexe() != null) {
+                userExist.setSexe(user.getSexe());
+            }
+            if (user.getDate_naissance() != null) {
+                userExist.setDate_naissance(user.getDate_naissance());
+            }
+            if (user.getLieu_naissance() != null) {
+                userExist.setLieu_naissance(user.getLieu_naissance());
+            }
+            if (user.getNationalite() != null) {
+                userExist.setNationalite(user.getNationalite());
+            }
+            return userRepository.save(userExist);
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public boolean addRoleToUser(String username, String name) {
         User user = userRepository.findByUsername(username).orElse(null);

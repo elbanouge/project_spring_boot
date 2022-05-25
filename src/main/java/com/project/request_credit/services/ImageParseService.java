@@ -256,7 +256,11 @@ public class ImageParseService {
             String[] line2Split = line2.replaceAll("[^0-9]+", " ").split(" ");
             for (int i = 0; i < line2Split.length; i++) {
                 if (line2Split[i].length() > 0 && line2Split[i].length() > 1) {
-                    date += line2Split[i] + " ";
+                    if (i != line2Split.length - 1) {
+                        date += line2Split[i].trim() + "/";
+                    } else {
+                        date += line2Split[i].trim();
+                    }
                 }
             }
             dateNaiss = date;
@@ -454,40 +458,69 @@ public class ImageParseService {
         return res;
     }
 
-    public String compareUsers(String info, Long id_user) {
+    public String compareInfoUserOCR(String info, Long id_user, String type) {
         String res = "";
         boolean bol = false;
         User user = accountService.findById(id_user);
         if (user != null) {
+            String CIN = "";
+            String Nom = "";
+            String Prenom = "";
+            String Adresse = "";
+            String Sexe = "";
 
-            String CIN = info.split("\n")[0].split(":")[1].trim();
-            String Nom = info.split("\n")[1].split(":")[1].trim();
-            String Prenom = info.split("\n")[2].split(":")[1].trim();
-            String Adresse = info.split("\n")[3].split(":")[1].trim();
-            String Sexe = info.split("\n")[4].split(":")[1].trim();
+            String dateNaiss = "";
+            String lieuNaiss = "";
 
-            if (CIN.equals(user.getCin())) {
-                res += "CIN user and CIN OCR are the same \n";
-                bol = true;
-            }
-            if (Nom.toLowerCase().equals(user.getLastName().toLowerCase())) {
-                res += "Nom user and Nom OCR are the same \n";
-                bol = true;
-            }
-            if (Prenom.toLowerCase().equals(user.getFirstName().toLowerCase())) {
-                res += "Prenom user and Prenom OCR are the same \n";
-                bol = true;
-            }
-            if (Adresse.toLowerCase().equals(user.getAddress().toLowerCase())) {
-                res += "Adresse user and Adresse OCR are the same \n";
-                bol = true;
-            }
-            if (Sexe.equals("M") && user.getSexe() == true || Sexe.equals("F") && user.getSexe() == false) {
-                res += "Sexe user and Sexe OCR are the same \n";
-                bol = true;
+            if (type.equals("CIN_NEW_Verso")) {
+
+                CIN = info.split("\n")[0].split(":")[1].trim();
+                Nom = info.split("\n")[1].split(":")[1].trim();
+                Prenom = info.split("\n")[2].split(":")[1].trim();
+                Adresse = info.split("\n")[3].split(":")[1].trim();
+                Sexe = info.split("\n")[4].split(":")[1].trim();
+
+                if (CIN.equals(user.getCin())) {
+                    res += "CIN user and CIN OCR are the same \n";
+                    bol = true;
+                }
+                if (Nom.toLowerCase().equals(user.getLastName().toLowerCase())) {
+                    res += "Nom user and Nom OCR are the same \n";
+                    bol = true;
+                }
+                if (Prenom.toLowerCase().equals(user.getFirstName().toLowerCase())) {
+                    res += "Prenom user and Prenom OCR are the same \n";
+                    bol = true;
+                }
+                if (Adresse.toLowerCase().equals(user.getAddress().toLowerCase())) {
+                    res += "Adresse user and Adresse OCR are the same \n";
+                    bol = true;
+                }
+                if (Sexe.equals("M") && user.getSexe() == true || Sexe.equals("F") && user.getSexe() == false) {
+                    res += "Sexe user and Sexe OCR are the same \n";
+                    bol = true;
+                }
+
+            } else if (type.equals("CIN_NEW_Recto")) {
+
+                lieuNaiss = info.split("\n")[0].split(":")[1].trim();
+                dateNaiss = info.split("\n")[1].split(":")[1].trim();
+
+                if (dateNaiss.toLowerCase().trim().equals(user.getDate_naissance().toLowerCase().trim())) {
+                    res += "Date de naissance user and Date de naissance OCR are the same \n";
+                    bol = true;
+                }
+                if (lieuNaiss.toLowerCase().trim().equals(user.getLieu_naissance().toLowerCase().trim())) {
+                    res += "Lieu Naissance user and Lieu Naissance OCR are the same \n";
+                    bol = true;
+                }
+            } else if (type.equals("CIN_Old_Verso")) {
+
+            } else if (type.equals("CIN_Old_Recto")) {
+
             }
 
-            if (!bol) {
+            if (bol == false) {
                 res = "Info OCR and user are different \n";
             }
         }

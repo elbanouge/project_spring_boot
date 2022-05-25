@@ -118,8 +118,8 @@ public class OCRController {
 				return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
 			} else {
 				String res = imageParseService.ocrNewCINVerso(image.getResult());
-				String resCompare = imageParseService.compareUsers(res, ocr.getId_user());
-				return new ResponseEntity<>(resCompare, HttpStatus.OK);
+				String resCompare = imageParseService.compareInfoUserOCR(res, ocr.getId_user(), "CIN_NEW_Verso");
+				return new ResponseEntity<>(res + "\n\n" + resCompare, HttpStatus.OK);
 			}
 		}
 	}
@@ -136,7 +136,8 @@ public class OCRController {
 				return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
 			} else {
 				String res = imageParseService.ocrNewCINRecto(image.getResult());
-				return new ResponseEntity<>(res, HttpStatus.OK);
+				String resCompare = imageParseService.compareInfoUserOCR(res, ocr.getId_user(), "CIN_NEW_Recto");
+				return new ResponseEntity<>(res + "\n\n" + resCompare, HttpStatus.OK);
 			}
 		}
 	}

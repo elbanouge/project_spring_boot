@@ -13,6 +13,8 @@ public interface AccountService {
 
     public boolean updateUser(User user);
 
+    public User upgradeUser(User user, Long id);
+
     public boolean addRoleToUser(String username, String name);
 
     public List<User> getAllUsers();

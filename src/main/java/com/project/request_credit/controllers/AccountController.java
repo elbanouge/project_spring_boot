@@ -82,7 +82,7 @@ public class AccountController {
     }
 
     @PostMapping({ "registration" })
-    public ResponseEntity<?> Personalinfos(@RequestBody User user) {
+    public ResponseEntity<?> registration(@RequestBody User user) {
         User userExist = accountService.findUserByEmail(user.getEmail());
         User userExistUsername = accountService.findUserByUsername(user.getUsername());
         if (userExist != null) {
@@ -92,6 +92,16 @@ public class AccountController {
         } else {
             User userCreated = accountService.createNewUser(user);
             return new ResponseEntity<>(userCreated, HttpStatus.OK);
+        }
+    }
+
+    @PutMapping({ "update/{id_user}" })
+    public ResponseEntity<?> updateUser(@PathVariable Long id_user, @RequestBody User user) {
+        User userUpdated = accountService.upgradeUser(user, id_user);
+        if (userUpdated != null) {
+            return new ResponseEntity<>(userUpdated, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
     }
 
