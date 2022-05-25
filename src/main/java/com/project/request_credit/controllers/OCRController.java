@@ -59,6 +59,7 @@ public class OCRController {
 
 				if (scannerExist != null) {
 					res = imageParseService.saveImageOCR(scannerExist, ocr);
+					System.out.println(res);
 					return new ResponseEntity<>(res, HttpStatus.OK);
 				} else {
 					res = imageParseService.saveImageOCR(newScanner, ocr);
@@ -70,6 +71,7 @@ public class OCRController {
 						boolean verso=resPath.contains("CNIEverso");
 						if(recto) ok=OCRNewCINRecto(ocr);
 						if(verso) ok=OCRNewCINVerso(ocr);
+						System.out.println(res);
 						return new ResponseEntity<>(ok, HttpStatus.OK);
 					}
 				}

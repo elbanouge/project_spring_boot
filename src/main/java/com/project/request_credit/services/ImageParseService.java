@@ -466,30 +466,33 @@ public class ImageParseService {
             String Adresse = info.split("\n")[3].split(":")[1].trim();
             String Sexe = info.split("\n")[4].split(":")[1].trim();
 
+            System.out.println(CIN+"\n"+Nom+"\n"+ Prenom+"\n"+Adresse +"\n"+Sexe);
             if (CIN.equals(user.getCin())) {
-                res += "CIN user and CIN OCR are the same \n";
-                bol = true;
-            }
-            if (Nom.toLowerCase().equals(user.getLastName().toLowerCase())) {
-                res += "Nom user and Nom OCR are the same \n";
-                bol = true;
-            }
-            if (Prenom.toLowerCase().equals(user.getFirstName().toLowerCase())) {
-                res += "Prenom user and Prenom OCR are the same \n";
-                bol = true;
-            }
-            if (Adresse.toLowerCase().equals(user.getAddress().toLowerCase())) {
-                res += "Adresse user and Adresse OCR are the same \n";
-                bol = true;
-            }
-            if (Sexe.equals("M") && user.getSexe() == "homme" || Sexe.equals("F") && user.getSexe() == "femme") {
-                res += "Sexe user and Sexe OCR are the same \n";
+                res += "CIN user and CIN OCR are the same;";
                 bol = true;
             }
 
-            if (!bol) {
-                res = "Info OCR and user are different \n";
-            }
+            else{res += "CIN user and CIN OCR are diferent;";}
+            if (Nom.toLowerCase().split(" ").equals(user.getLastName().toLowerCase())) {
+                res += "Nom user and Nom OCR are the same;";
+                bol = true;
+            }else{res += "Nom user and Nom OCR  are different;";}
+            if (Prenom.toLowerCase().equals(user.getFirstName().toLowerCase())) {
+                res += "Prenom user and Prenom OCR are the same;";
+                bol = true;
+            }else{res += "Prenom user and Prenom OCR are different;";}
+            if (Adresse.toLowerCase().equals(user.getAddress().toLowerCase())) {
+                res += "Adresse user and Adresse OCR are the same;";
+                bol = true;
+            }else{res += "Adresse user and Adresse OCR are different;";}
+            if (Sexe.equals("M") && user.getSexe() == "homme" || Sexe.equals("F") && user.getSexe() == "femme") {
+                res += "Sexe user and Sexe OCR are the same;";
+                bol = true;
+            }else{res += "Sexe user and Sexe OCR are different;";}
+
+//            if (bol) {
+//                res+= "Info OCR and user are the same;";
+//            }
         }
         return res;
     }
