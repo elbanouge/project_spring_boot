@@ -467,25 +467,24 @@ public class ImageParseService {
             String Sexe = info.split("\n")[4].split(":")[1].trim();
 
             System.out.println(CIN+"\n"+Nom+"\n"+ Prenom+"\n"+Adresse +"\n"+Sexe);
-            if (CIN.equals(user.getCin())) {
+            if (CIN.contains(user.getCin())) {
                 res += "CIN user and CIN OCR are the same;";
                 bol = true;
             }
-
             else{res += "CIN user and CIN OCR are diferent;";}
-            if (Nom.toLowerCase().split(" ").equals(user.getLastName().toLowerCase())) {
+            if (Nom.toLowerCase().contains(user.getLastName().toLowerCase())) {
                 res += "Nom user and Nom OCR are the same;";
                 bol = true;
             }else{res += "Nom user and Nom OCR  are different;";}
-            if (Prenom.toLowerCase().equals(user.getFirstName().toLowerCase())) {
+            if (Prenom.toLowerCase().contains(user.getFirstName().toLowerCase())) {
                 res += "Prenom user and Prenom OCR are the same;";
                 bol = true;
             }else{res += "Prenom user and Prenom OCR are different;";}
-            if (Adresse.toLowerCase().equals(user.getAddress().toLowerCase())) {
+            if (Adresse.toLowerCase().contains(user.getAddress().toLowerCase())) {
                 res += "Adresse user and Adresse OCR are the same;";
                 bol = true;
             }else{res += "Adresse user and Adresse OCR are different;";}
-            if (Sexe.equals("M") && user.getSexe() == "homme" || Sexe.equals("F") && user.getSexe() == "femme") {
+            if (Sexe.equals("M") && user.getSexe().equals("homme") || Sexe.equals("F") && user.getSexe().equals("femme")) {
                 res += "Sexe user and Sexe OCR are the same;";
                 bol = true;
             }else{res += "Sexe user and Sexe OCR are different;";}
@@ -493,7 +492,7 @@ public class ImageParseService {
 //            if (bol) {
 //                res+= "Info OCR and user are the same;";
 //            }
-        }
+        }System.out.println("comp resultat:\n"+res);
         return res;
     }
 }
