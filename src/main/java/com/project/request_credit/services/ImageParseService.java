@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 
 import javax.imageio.ImageIO;
@@ -30,6 +31,7 @@ import net.sourceforge.tess4j.TesseractException;
 
 @Service
 public class ImageParseService {
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     @Autowired
     private ScannerService scannerService;
@@ -224,10 +226,12 @@ public class ImageParseService {
 
         String dateNaiss = "aucun";
         String lieuNaiss = "aucun";
+        String dateValidite = "aucun";
 
         String[] lines = result.split("\n");
         String line1 = "";
         String line2 = "";
+        String line3 = "";
 
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].contains("à ")) {
@@ -243,8 +247,16 @@ public class ImageParseService {
             }
         }
 
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("au ")) {
+                line3 = lines[i];
+                break;
+            }
+        }
+
         System.out.println("line1 : " + line1);
         System.out.println("line2 : " + line2);
+        System.out.println("line3 : " + line3);
 
         if (line1.length() > 0) {
             lieuNaiss = line1.replaceAll("[^A-Z]+", " ");
@@ -266,7 +278,20 @@ public class ImageParseService {
             dateNaiss = date;
         }
 
-        res = "Lieu de naissance : " + lieuNaiss + "\nDate de naissance : " + dateNaiss;
+        if (line3.length() > 0) {
+            line3 = line3.split("au ")[1];
+            dateValidite = line3.replaceAll("[^0-9]+", " ").trim();
+
+            for (int i = 0; i < dateValidite.length(); i++) {
+                if (dateValidite.charAt(i) == ' ') {
+                    dateValidite = dateValidite.replace(" ", "/");
+                    break;
+                }
+            }
+        }
+
+        res = "Lieu de naissance : " + lieuNaiss + "\nDate de naissance : " + dateNaiss + "\nDate de validité : "
+                + dateValidite;
         return res;
     }
 
@@ -469,6 +494,85 @@ public class ImageParseService {
         return res;
     }
 
+    public String ocrAttestationSalaire(String result) {
+        String res = "";
+        String nom = "";
+        String prenom = "";
+        String sexe = "";
+        String cin = "";
+        String salaire = "";
+        String date = "";
+
+        String[] lines = result.split("\n");
+        String line1 = "";
+        String line2 = "";
+        String line3 = "";
+        String line4 = "";
+        String line5 = "";
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].toLowerCase().contains("ATTESTE PAR LA PRESENTE QUE".toLowerCase())) {
+                line1 = lines[i];
+            }
+        }
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].toLowerCase().contains("CIN N°".toLowerCase())) {
+                line2 = lines[i];
+            }
+        }
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].toLowerCase().contains("SALAIRE ANNUEL NET DE".toLowerCase())) {
+                line3 = lines[i];
+            }
+        }
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].toLowerCase().contains("DATE DE PAIEMENT".toLowerCase())) {
+                line4 = lines[i];
+            }
+        }
+
+        if (line1.length() > 0) {
+            String[] line1Split = line1.split("ATTESTE PAR LA PRESENTE QUE");
+            sexe = line1Split[1].trim().split(" ")[0].trim();
+            if (sexe.toLowerCase().equals("MR".toLowerCase())) {
+                sexe = "M";
+            } else {
+                sexe = "F";
+            }
+
+            nom = line1Split[1].trim().split(" ")[1].trim();
+            prenom = line1Split[1].trim().split(" ")[2].trim();
+        }
+
+        if (line2.length() > 0) {
+            String[] line2Split = line2.split(" ");
+            for (int i = 0; i < line2Split.length; i++) {
+                if (line2Split[i].contains("CIN")) {
+                    cin = line2Split[i + 2];
+                    break;
+                }
+            }
+        }
+
+        if (line3.length() > 0) {
+            salaire = line3.replaceAll("[^0-9]+", " ").trim();
+            salaire = salaire.split(" ")[0] + "." + salaire.split(" ")[1];
+            salaire = df.format(Double.parseDouble(salaire) / 12) + "";
+        }
+
+        System.out.println("line1 : " + line1);
+        System.out.println("line2 : " + line2);
+        System.out.println("line3 : " + line3);
+        System.out.println("line4 : " + line4);
+
+        res = "nom : " + nom + "\n" + "prenom : " + prenom + "\n" + "sexe : " + sexe + "\n" + "cin : " + cin + "\n"
+                + "salaire : " + salaire;
+        return res;
+    }
+
     public String compareInfoUserOCR(String info, Long id_user, String type) {
         String res = "";
         boolean bol = false;
@@ -482,7 +586,7 @@ public class ImageParseService {
 
             String dateNaiss = "";
             String lieuNaiss = "";
-            // String dateCINVal = "";
+            String dateCINVal = "";
 
             if (type.equals("CIN_NEW_Verso")) {
 
@@ -517,6 +621,7 @@ public class ImageParseService {
 
                 lieuNaiss = info.split("\n")[0].split(":")[1].trim();
                 dateNaiss = info.split("\n")[1].split(":")[1].trim();
+                dateCINVal = info.split("\n")[2].split(":")[1].trim();
 
                 if (dateNaiss.toLowerCase().trim().equals(user.getDate_naissance().toLowerCase().trim())) {
                     res += "Date de naissance user and Date de naissance OCR are the same \n";
@@ -524,6 +629,10 @@ public class ImageParseService {
                 }
                 if (lieuNaiss.toLowerCase().trim().equals(user.getLieu_naissance().toLowerCase().trim())) {
                     res += "Lieu Naissance user and Lieu Naissance OCR are the same \n";
+                    bol = true;
+                }
+                if (dateCINVal.toLowerCase().trim().equals(user.getDate_validite_cin().toLowerCase().trim())) {
+                    res += "Date CIN Val user and Date CIN Val OCR are the same \n";
                     bol = true;
                 }
             } else if (type.equals("CIN_Old_Verso")) {
@@ -549,7 +658,7 @@ public class ImageParseService {
 
                 dateNaiss = info.split("\n")[0].split(":")[1].trim();
                 lieuNaiss = info.split("\n")[1].split(":")[1].trim();
-                // dateCINVal = info.split("\n")[2].split(":")[1].trim();
+                dateCINVal = info.split("\n")[2].split(":")[1].trim();
 
                 if (dateNaiss.toLowerCase().trim().equals(user.getDate_naissance().toLowerCase().trim())) {
                     res += "Date de naissance user and Date de naissance OCR are the same \n";
@@ -557,6 +666,10 @@ public class ImageParseService {
                 }
                 if (lieuNaiss.toLowerCase().trim().equals(user.getLieu_naissance().toLowerCase().trim())) {
                     res += "Lieu Naissance user and Lieu Naissance OCR are the same \n";
+                    bol = true;
+                }
+                if (dateCINVal.toLowerCase().trim().equals(user.getDate_validite_cin().toLowerCase().trim())) {
+                    res += "Date CIN Validity user and Date CIN Validity OCR are the same \n";
                     bol = true;
                 }
             }

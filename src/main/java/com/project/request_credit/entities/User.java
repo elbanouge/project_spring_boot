@@ -47,6 +47,7 @@ public class User {
         private Boolean sexe;
         private String date_naissance;
         private String lieu_naissance;
+        private String date_validite_cin;
 
         // more fields
         private String nationalite;

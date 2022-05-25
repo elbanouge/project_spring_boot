@@ -178,15 +178,22 @@ public class OCRController {
 		}
 	}
 
-	@PostMapping({ "OCR_Bulletin_Paie" })
-	public ResponseEntity<?> ocrBulletinPaie(@RequestBody OCR ocr) {
+	@PostMapping({ "OCR_Attestation_Salaire" })
+	public ResponseEntity<?> ocrAttestationSalaire(@RequestBody OCR ocr) {
 		Scanner image = scannerService.getScannerByUrl(ocr.getImage());
 
 		if (image == null) {
 			return new ResponseEntity<>("Image not found", HttpStatus.NOT_FOUND);
 		} else {
-			String res = imageParseService.parseImage(image.getUrl(), ocr.getDestinationLanguage());
-			return new ResponseEntity<>(res, HttpStatus.OK);
+			User user = accountService.findById(ocr.getId_user());
+			if (user == null) {
+				return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+			} else {
+				String res = imageParseService.ocrAttestationSalaire(image.getResult());
+				// String resCompare = imageParseService.compareInfoUserOCR(res,
+				// ocr.getId_user(), "CIN_Old_Recto");
+				return new ResponseEntity<>(res, HttpStatus.OK);
+			}
 		}
 	}
 

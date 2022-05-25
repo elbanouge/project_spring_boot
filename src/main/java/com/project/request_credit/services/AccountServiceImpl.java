@@ -105,6 +105,9 @@ public class AccountServiceImpl implements AccountService {
             if (user.getNationalite() != null) {
                 userExist.setNationalite(user.getNationalite());
             }
+            if (user.getDate_validite_cin() != null) {
+                userExist.setDate_validite_cin(user.getDate_validite_cin());
+            }
             return userRepository.save(userExist);
         } else {
             return null;
