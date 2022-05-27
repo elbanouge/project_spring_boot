@@ -60,8 +60,9 @@ public class User {
         private int otp;
         private Date otpExpiry;
         private String status;
-        private String processInstanceId;
-        private String taskId;
+//        private String processInstanceId;
+//        private String taskId;
+//        private String taskName;
 
         @ManyToMany(fetch = FetchType.EAGER)
         @JoinTable(name = "users_roles", joinColumns = {
@@ -225,21 +226,7 @@ public class User {
                 this.status = status;
         }
 
-        public String getProcessInstanceId() {
-                return processInstanceId;
-        }
 
-        public void setProcessInstanceId(String processInstanceId) {
-                this.processInstanceId = processInstanceId;
-        }
-
-        public String getTaskId() {
-                return taskId;
-        }
-
-        public void setTaskId(String taskId) {
-                this.taskId = taskId;
-        }
 
         public Set<Role> getRoles() {
                 return roles;
@@ -256,4 +243,6 @@ public class User {
         public void setScanners(Set<Scanner> scanners) {
                 this.scanners = scanners;
         }
+
+
 }

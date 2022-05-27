@@ -4,20 +4,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.project.request_credit.entities.Credit;
 import com.project.request_credit.entities.User;
 import com.project.request_credit.services.AccountService;
 import com.project.request_credit.services.UserDetailsServiceImpl;
+import com.project.request_credit.services.CreditService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
@@ -29,6 +26,9 @@ public class ProcessController {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private CreditService creditService;
 
     static final String URL_CAMUNDA = "http://localhost:8090/engine-rest/";
 
@@ -43,13 +43,14 @@ public class ProcessController {
 
     @PostMapping({ "start-process" })
     @SuppressWarnings("unchecked")
-    public ResponseEntity<?> startProcess(@RequestBody User user) {
-        if(accountService.findUserByEmail(user.getEmail())==null)  return new ResponseEntity<>("NOTFOUND", HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> startProcess(@RequestBody Credit credit) {
+        if(accountService.findUserByEmail(credit.getUser().getEmail())==null)  return new ResponseEntity<>("NOTFOUND", HttpStatus.NOT_FOUND);
 
         RestTemplate restTemplate = new RestTemplate();
 
-        Map<String, HashMap<String, HashMap<String, Object>>> variables = CreateJson("name", user.getFirstName(),
-                "prenom", user.getLastName());
+        Map<String, HashMap<String, HashMap<String, Object>>> variables = CreateJson
+                ("name", credit.getUser().getFirstName(),
+                "prenom", credit.getUser().getLastName());
 
         HttpEntity<Object> requestBody = new HttpEntity<>(variables);
         System.out.println(requestBody);
@@ -63,28 +64,38 @@ public class ProcessController {
         System.out.println(processInstanceId);
 
         //User
-        User userConnected = accountService.findUserByEmail(user.getEmail());
-        userConnected.setProcessInstanceId(processInstanceId);
-        accountService.updateUser(userConnected);
+        User userConnected = accountService.findUserByEmail(credit.getUser().getEmail());
+        Credit c=creditService.getCreditById(credit.getId());
+        System.out.println(credit.getId());
+        c.setProcessInstanceId(processInstanceId);
+        creditService.updateCredit(c,credit.getId());
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping({ "info-task-instance" })
+    @GetMapping({ "info-task-instance/{id}" })
     @SuppressWarnings("unchecked")
-    public ResponseEntity<?> infoProcess(@RequestParam(required = true) String processInstanceId) {
+    public ResponseEntity<?> infoProcess(@PathVariable long id, @RequestParam(required = true) String processInstanceId) {
         RestTemplate restTemplate = new RestTemplate();
         List<Map<String, Object>> result = restTemplate.getForObject(URL_CAMUNDA +
                 "task?processInstanceId=" + processInstanceId,
                 List.class);
 
         String taskId = (String) result.get(0).get("id");
+        String taskName = (String) result.get(0).get("name");
 
-        User userConnected = userDetailsService.profile();
-        userConnected.setTaskId(taskId);
-        accountService.updateUser(userConnected);
+        //User userConnected = accountService.findUserByEmail(credit.getUser().getEmail());
+        Credit c=creditService.getCreditById(id);
+        //c.setProcessInstanceId(processInstanceId);
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+
+        //User userConnected = accountService.findUserByEmail(email);
+        c.setTaskId(taskId);
+        c.setTaskName(taskName);
+        creditService.updateCredit(c,id);
+
+
+        return new ResponseEntity<>(creditService.updateCredit(c,id), HttpStatus.OK);
     }
 
     @PostMapping({ "complete-task-otp" })
