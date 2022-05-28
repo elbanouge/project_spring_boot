@@ -15,7 +15,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "roles")
 @Data
-@AllArgsConstructor
+//@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class Role {

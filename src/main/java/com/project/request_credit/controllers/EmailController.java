@@ -77,6 +77,9 @@ public class EmailController {
         if (bool)
         {
             this.otp=otp;
+            User user1=userService.findUserByEmail(email.getEmail());
+            user1.setOtp(otp);
+            userService.updateUser(email.getMessage(),user1);
             return ResponseEntity.ok("envoyé");
         }
         else
