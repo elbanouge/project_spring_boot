@@ -60,8 +60,9 @@ public class User {
         private int otp;
         private Date otpExpiry;
         private String status;
-        private String processInstanceId;
-        private String taskId;
+//        private String processInstanceId;
+//        private String taskId;
+//        private String taskName;
 
         @ManyToMany(fetch = FetchType.EAGER)
         @JoinTable(name = "users_roles", joinColumns = {
@@ -225,21 +226,7 @@ public class User {
                 this.status = status;
         }
 
-        public String getProcessInstanceId() {
-                return processInstanceId;
-        }
 
-        public void setProcessInstanceId(String processInstanceId) {
-                this.processInstanceId = processInstanceId;
-        }
-
-        public String getTaskId() {
-                return taskId;
-        }
-
-        public void setTaskId(String taskId) {
-                this.taskId = taskId;
-        }
 
         public Set<Role> getRoles() {
                 return roles;
@@ -260,7 +247,7 @@ public class User {
         public User(Long id, String firstName, String lastName, String username, String password, String email,
                         String phone, String cin, String address, String sexe, Date dateNai, String nationalite,
                         boolean client, boolean fonctionnaire, String mensuel, int otp, Date otpExpiry, String status,
-                        String processInstanceId, String taskId, Set<Role> roles, Set<Scanner> scanners) {
+                        Set<Role> roles, Set<Scanner> scanners) {
                 this.id = id;
                 this.firstName = firstName;
                 this.lastName = lastName;
@@ -279,10 +266,8 @@ public class User {
                 this.otp = otp;
                 this.otpExpiry = otpExpiry;
                 this.status = status;
-                this.processInstanceId = processInstanceId;
-                this.taskId = taskId;
                 this.roles = roles;
                 this.scanners = scanners;
         }
-        
+
 }
