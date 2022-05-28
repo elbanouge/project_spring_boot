@@ -18,7 +18,7 @@ import com.project.request_credit.models.OCR;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
-import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.Imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

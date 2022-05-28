@@ -1,9 +1,6 @@
 package com.project.request_credit.controllers;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import com.project.request_credit.entities.Role;
 import com.project.request_credit.entities.User;
@@ -15,7 +12,14 @@ import com.project.request_credit.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/api/user/")
 @RestController
@@ -246,6 +250,15 @@ public class AccountController {
         User user=accountService.findByEmail(email);
         if(user!=null)
             return new ResponseEntity<>(user ,HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PutMapping("update/{email}")
+    public ResponseEntity<User> update(@PathVariable String email,@RequestBody User newUser) {
+        User result=accountService.updateUser(email, newUser);
+        if(result!=null)
+            return new ResponseEntity<>(result ,HttpStatus.OK);
         else
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

@@ -256,4 +256,33 @@ public class User {
         public void setScanners(Set<Scanner> scanners) {
                 this.scanners = scanners;
         }
+
+        public User(Long id, String firstName, String lastName, String username, String password, String email,
+                        String phone, String cin, String address, String sexe, Date dateNai, String nationalite,
+                        boolean client, boolean fonctionnaire, String mensuel, int otp, Date otpExpiry, String status,
+                        String processInstanceId, String taskId, Set<Role> roles, Set<Scanner> scanners) {
+                this.id = id;
+                this.firstName = firstName;
+                this.lastName = lastName;
+                this.username = username;
+                this.password = password;
+                this.email = email;
+                this.phone = phone;
+                this.cin = cin;
+                this.address = address;
+                this.sexe = sexe;
+                this.dateNai = dateNai;
+                this.nationalite = nationalite;
+                this.client = client;
+                this.fonctionnaire = fonctionnaire;
+                this.mensuel = mensuel;
+                this.otp = otp;
+                this.otpExpiry = otpExpiry;
+                this.status = status;
+                this.processInstanceId = processInstanceId;
+                this.taskId = taskId;
+                this.roles = roles;
+                this.scanners = scanners;
+        }
+        
 }

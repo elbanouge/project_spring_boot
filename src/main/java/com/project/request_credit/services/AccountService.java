@@ -39,6 +39,7 @@ public interface AccountService {
     //User updatePassword(String password,String email);
 
     public User updatePassword(String email);
+    public User updateUser(String email,User user);
 
     public void delete(Long id);
     public void deleteAll();

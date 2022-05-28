@@ -183,6 +183,30 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    @Override
+    public User updateUser(String email, User newUser) {
+        User oldUser=findByEmail(email);
+        if(oldUser!=null)
+        {
+            oldUser.setCin(newUser.getCin());
+            oldUser.setLastName(newUser.getLastName());
+            oldUser.setFirstName(newUser.getFirstName());
+            oldUser.setEmail(newUser.getEmail());
+            oldUser.setPassword(newUser.getPassword());
+            oldUser.setAddress(newUser.getAddress());
+            oldUser.setSexe(newUser.getSexe());
+            oldUser.setDateNai(newUser.getDateNai());
+            oldUser.setNationalite(newUser.getNationalite());
+            oldUser.setClient(newUser.isClient());
+            oldUser.setFonctionnaire(newUser.isFonctionnaire());
+            oldUser.setMensuel(newUser.getMensuel());
+            oldUser.setPhone(newUser.getPhone());
+            save(oldUser);
+            return oldUser;
+        }
+        return null;
+    }
+
 
 }
 

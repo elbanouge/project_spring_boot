@@ -27,4 +27,23 @@ public class Scanner {
     private String url;
     @Column(name = "result", columnDefinition = "TEXT")
     private String result;
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public String getUrl() {
+        return url;
+    }
+    public void setUrl(String url) {
+        this.url = url;
+    }
+    public String getResult() {
+        return result;
+    }
+    public void setResult(String result) {
+        this.result = result;
+    }
+    
 }
