@@ -105,4 +105,13 @@ public class EmailController {
         else
             return ResponseEntity.badRequest().body("Email not sent");
     }
+
+    @PostMapping("sendEmailToAdmin")
+    public ResponseEntity<?> sendEmailToAdmin(@RequestBody Email email) {
+        boolean bool = emailSenderService.sendEmailToAdmin(email.getEmail(), email.getSubject(), email.getMessage());
+        if (bool)
+            return ResponseEntity.ok("Email sent successfully");
+        else
+            return ResponseEntity.badRequest().body("Email not sent");
+    }
 }

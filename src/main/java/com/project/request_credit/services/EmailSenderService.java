@@ -22,4 +22,16 @@ public class EmailSenderService {
         return true;
     }
 
+
+    public boolean sendEmailToAdmin(String fromEmail, String subject, String body) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo("laylaelhajjaji@gmail.com ");
+        message.setText(body);
+        message.setSubject(subject);
+        mailSender.send(message);
+        System.out.println("mail sent to laylaelhajjaji@gmail.com ................");
+        return true;
+    }
+
 }
