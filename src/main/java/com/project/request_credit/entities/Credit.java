@@ -1,6 +1,8 @@
 package com.project.request_credit.entities;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +31,11 @@ public class Credit {
     private double mensualite;
     private String date;
 
-    @ManyToOne
+    // more fields
+    private String taskId;
+    private String processInstanceId;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "id_user")
     private User user;
 }

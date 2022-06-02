@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,9 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -59,24 +57,20 @@ public class User {
         private int otp;
         private Date otpExpiry;
         private String status;
-        private String processInstanceId;
-        private String taskId;
 
-        @ManyToMany(fetch = FetchType.EAGER)
+        @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
         @JoinTable(name = "users_roles", joinColumns = {
                         @JoinColumn(name = "user_id")
         }, inverseJoinColumns = {
                         @JoinColumn(name = "role_id")
         })
-        @OnDelete(action = OnDeleteAction.CASCADE)
         private Set<Role> roles = new HashSet<>();
 
-        @ManyToMany(fetch = FetchType.EAGER)
+        @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
         @JoinTable(name = "users_scanners", joinColumns = {
                         @JoinColumn(name = "user_id")
         }, inverseJoinColumns = {
                         @JoinColumn(name = "scanner_id")
         })
-        @OnDelete(action = OnDeleteAction.CASCADE)
         private Set<Scanner> scanners = new HashSet<>();
 }

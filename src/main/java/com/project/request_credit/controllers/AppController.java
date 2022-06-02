@@ -33,13 +33,13 @@ public class AppController {
                     "abde24", "abde.banouge2@gmail.com",
                     "0615761546", "JE295844", "89 BLOC E LOT TIZNIT", true,
                     "24/12/1995", "OUIJJANE TIZNIT", null,
-                    null, false, false, null, 0, null, null, null, null, new HashSet<>(), new HashSet<>());
-                    
+                    null, false, false, null, 0, null, null, new HashSet<>(), new HashSet<>());
+
             User user2 = new User(null, "Abdellah", "Elbanouge", "abde.banouge3",
                     "abde23", "abde.banouge3@gmail.com",
                     "0615761546", "JE295844", "89 BLOC E LOT TIZNIT",
                     true, "24/12/1995", "OUIJJANE TIZNIT", null,
-                    null, false, false, null, 0, null, null, null, null, new HashSet<>(), new HashSet<>());
+                    null, false, false, null, 0, null, null, new HashSet<>(), new HashSet<>());
 
             accountService.createNewUser(user1);
             accountService.createNewUser(user2);
