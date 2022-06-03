@@ -79,7 +79,7 @@ public class EmailController {
             this.otp=otp;
             User user1=userService.findUserByEmail(email.getEmail());
             user1.setOtp(otp);
-            userService.updateUser(email.getMessage(),user1);
+            userService.updateUser(email.getEmail(),user1);
             return ResponseEntity.ok("envoyé");
         }
         else
@@ -89,6 +89,7 @@ public class EmailController {
     @PostMapping("verifyOTP")
     public ResponseEntity<String> verifyOTP(@RequestBody int receivedOtp) {
 
+        System.out.println("receivedOtp: "+receivedOtp+"\notp:"+otp);
         if (receivedOtp==otp)
         {
             return ResponseEntity.ok("match");

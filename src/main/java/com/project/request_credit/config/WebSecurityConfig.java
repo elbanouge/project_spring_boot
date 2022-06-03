@@ -56,6 +56,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/user/findByEmail/**").permitAll()
                 .antMatchers("/api/user/changePassword/**").permitAll()
                 .antMatchers("/api/user/**").permitAll()
+                .antMatchers("/api/email/**").permitAll()
+                .antMatchers("/api/process/**").permitAll()
                 //.antMatchers("/api/user/findByEmail/**").permitAll()
                 // .antMatchers("/api/ocr/all").hasAnyAuthority("USER", "ADMIN")
                 .anyRequest().authenticated()

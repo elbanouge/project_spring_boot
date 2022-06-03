@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.Locale;
 
 import javax.imageio.ImageIO;
 
@@ -165,11 +166,12 @@ public class ImageParseService {
         }
 
         for (int i = 0; i < lines.length; i++) {
-            if (lines[i].contains("Adr")) {
+            if (lines[i].toLowerCase().contains("Adr".toLowerCase())) {
                 line3 += lines[i];
                 break;
             }
         }
+        System.out.println("line3: "+line3);
 
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].contains("Sexe") || lines[i].contains("exe")) {
