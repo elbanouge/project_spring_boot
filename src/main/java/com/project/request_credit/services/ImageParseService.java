@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Locale;
 
 import javax.imageio.ImageIO;
@@ -152,6 +153,10 @@ public class ImageParseService {
         String sexe = "aucun";
 
         String[] lines = result.split("\n");
+//        int y=0;
+//        for(String a:lines) {
+//            System.out.println("lines["+y+"]="+ a);
+//        }
         String line1 = "";
         String line2 = "";
         String line3 = "";
@@ -166,15 +171,18 @@ public class ImageParseService {
         }
 
         for (int i = 0; i < lines.length; i++) {
-            if (lines[i].toLowerCase().contains("Adr".toLowerCase())) {
+            if (lines[i].toLowerCase().contains("adr") ||
+                    lines[i].toLowerCase().contains("dresse") ||
+                    lines[i].toLowerCase().contains("adresse") ) {
+
                 line3 += lines[i];
                 break;
             }
         }
-        System.out.println("line3: "+line3);
+//        System.out.println("line3: "+line3);
 
         for (int i = 0; i < lines.length; i++) {
-            if (lines[i].contains("Sexe") || lines[i].contains("exe")) {
+            if (lines[i].contains("Sexe") || lines[i].contains("exe") || lines[i].toLowerCase().contains("sexe")) {
                 line4 += lines[i];
                 break;
             }
