@@ -80,7 +80,7 @@ public class ImageParseService {
 
                 if (scanner != null) {
                     user.getScanners().add(scanner);
-                    accountService.createNewUser(user);
+                    //accountService.createNewUser(user);
                     return result;
                 } else {
                     return "Error";

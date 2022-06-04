@@ -70,7 +70,8 @@ public class ProcessController {
         c.setProcessInstanceId(processInstanceId);
         creditService.updateCredit(c,credit.getId());
         infoProcess(credit.getId(),processInstanceId);
-        return new ResponseEntity<>(infoProcess(credit.getId(),processInstanceId), HttpStatus.OK);
+        c=creditService.getCreditById(credit.getId());
+        return new ResponseEntity<>(c, HttpStatus.OK);
     }
 
     @GetMapping({ "info-task-instance/{id}" })
@@ -92,10 +93,11 @@ public class ProcessController {
         //User userConnected = accountService.findUserByEmail(email);
         c.setTaskId(taskId);
         c.setTaskName(taskName);
-        creditService.updateCredit(c,id);
+        c=creditService.updateCredit(c,id);
 
+        System.out.println(c.toString());
 
-        return new ResponseEntity<>(creditService.updateCredit(c,id), HttpStatus.OK);
+        return new ResponseEntity<>(c, HttpStatus.OK);
     }
 
     @PostMapping({ "complete-task-otp" })
@@ -129,6 +131,7 @@ public class ProcessController {
                                              @RequestParam(required = true) String taskId) {
         RestTemplate restTemplate = new RestTemplate();
         Credit credit=creditService.getCreditById(id);
+        System.out.println("complete-task-otp-motPass "+credit.getUser().getOtp());
         Map<String, HashMap<String, HashMap<String, Object>>> variables = CreateJsonDeuxArgs("otp", credit.getUser().getOtp() + "",
                 "motPass", credit.getUser().getPassword());
 
