@@ -30,24 +30,24 @@ public class CreditController {
     @Autowired
     AccountService accountService;
 
-    @GetMapping("all")
-    public List<Credit> getAllContacts() {
-        return creditService.getAllCredit();
+    @GetMapping({ "all" })
+    public List<Credit> getAllCredits() {
+        return creditService.getAllCredits();
     }
 
-    @GetMapping(value = "all/{id}")
+    @GetMapping({ "getCreditById/{id}" })
     public Credit getById(@PathVariable int id) {
         return creditService.getCreditById(id);
     }
 
-    @DeleteMapping(value = "delete/{id}")
+    @DeleteMapping({ "deleteCredit/{id}" })
     public ResponseEntity<?> delete(@PathVariable long id) {
         Credit credit = creditService.getCreditById(id);
         creditService.deleteCredit(id);
         return new ResponseEntity<>(credit, HttpStatus.OK);
     }
 
-    @PostMapping(value = "add/{username}")
+    @PostMapping({ "createNewCredit/{username}" })
     public ResponseEntity<?> add(
             @RequestBody Credit credit, @PathVariable String username) {
         Date date = new Date();
@@ -65,7 +65,7 @@ public class CreditController {
         }
     }
 
-    @PutMapping(value = "update/{id}")
+    @PutMapping({ "updateCredit/{id}" })
     public Credit update(
             @RequestBody Credit credit, @PathVariable long id) {
         Credit credit1 = creditService.getCreditById(id);
@@ -80,13 +80,13 @@ public class CreditController {
         return creditService.updateCredit(credit1, id);
     }
 
-    @GetMapping(value = "allcredit/{email}")
+    @GetMapping({ "getCreditsByUser/{email}" })
     public List<Credit> getByemail(@PathVariable String email) {
         User u = accountService.findUserByEmail(email);
-        return creditService.CreditByidUser(u);
+        return creditService.getCreditsByUser(u);
     }
 
-    @GetMapping(value = "getCredit/{email}")
+    @GetMapping({ "getCreditByUser/{email}" })
     public ResponseEntity<?> getCreditByEmail(@PathVariable String email) {
         User user = accountService.findUserByEmail(email);
         Credit credit = creditService.getCreditByUser(user);
@@ -97,10 +97,10 @@ public class CreditController {
         }
     }
 
-    @GetMapping(value = "getnombreCredit/{email}")
+    @GetMapping({ "getNumberOfCreditsByUser/{email}" })
     public int getnombreCredit(@PathVariable String email) {
         User u = accountService.findUserByEmail(email);
-        List<Credit> aa = creditService.CreditByidUser(u);
+        List<Credit> aa = creditService.getCreditsByUser(u);
         return aa.size();
     }
 }

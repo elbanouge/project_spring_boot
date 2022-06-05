@@ -9,8 +9,10 @@ import com.project.request_credit.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class ScannerService {
 
     @Autowired
@@ -28,12 +30,12 @@ public class ScannerService {
     }
 
     public List<Scanner> getScanners() {
-        return scannerRepository.findAll();
+        return (List<Scanner>) scannerRepository.findAll();
     }
 
     public void deleteById(Long id) {
         Scanner image = scannerRepository.findById(id).orElse(null);
-        List<User> users = userRepository.findAll();
+        List<User> users = (List<User>) userRepository.findAll();
         for (User user : users) {
             for (Scanner scanner : user.getScanners()) {
                 if (scanner.getId().equals(image.getId())) {

@@ -63,10 +63,14 @@ public class ProcessController {
                 System.out.println(processInstanceId);
 
                 User userConnected = userDetailsService.profile();
-                Credit credit = creditService.getCreditByUser(userConnected);
-                credit.setProcessInstanceId(processInstanceId);
-                // accountService.updateUser(userConnected);
-                creditService.updateCredit(credit, credit.getId());
+                List<Credit> credits = creditService.getCreditsByUser(userConnected);
+                if (credits != null) {
+                        for (Credit credit : credits) {
+
+                                credit.setProcessInstanceId(processInstanceId);
+                                creditService.updateCredit(credit, credit.getId());
+                        }
+                }
 
                 return new ResponseEntity<>(resultMap, HttpStatus.OK);
         }
@@ -82,11 +86,14 @@ public class ProcessController {
                 String taskId = (String) result.get(0).get("id");
 
                 User userConnected = userDetailsService.profile();
-                Credit credit = creditService.getCreditByUser(userConnected);
-                credit.setTaskId(taskId);
-                // accountService.updateUser(userConnected);
-                creditService.updateCredit(credit, credit.getId());
+                List<Credit> credits = creditService.getCreditsByUser(userConnected);
+                if (credits != null) {
+                        for (Credit credit : credits) {
 
+                                credit.setTaskId(taskId);
+                                creditService.updateCredit(credit, credit.getId());
+                        }
+                }
                 return new ResponseEntity<>(result, HttpStatus.OK);
         }
 
@@ -156,6 +163,16 @@ public class ProcessController {
                 return new ResponseEntity<>("Task completed successfully", HttpStatus.OK);
         }
 
+        @GetMapping({ "info-variables-instance" })
+        public ResponseEntity<?> infoVarProcess(@RequestParam(required = true) String processInstanceId) {
+                RestTemplate restTemplate = new RestTemplate();
+                Object result = restTemplate.getForObject(URL_CAMUNDA +
+                                "execution/" + processInstanceId + "/localVariables",
+                                Object.class);
+
+                return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+
         public Map<String, HashMap<String, HashMap<String, Object>>> CreateJsonDeuxArgs(String valueMap1, String key1,
                         String valueMap2, String key2) {
                 Map<String, HashMap<String, HashMap<String, Object>>> variables = new HashMap<>();
@@ -170,16 +187,6 @@ public class ProcessController {
                 info_user.put(valueMap2, value2);
                 variables.put("variables", info_user);
                 return variables;
-        }
-
-        @GetMapping({ "info-variables-instance" })
-        public ResponseEntity<?> infoVarProcess(@RequestParam(required = true) String processInstanceId) {
-                RestTemplate restTemplate = new RestTemplate();
-                Object result = restTemplate.getForObject(URL_CAMUNDA +
-                                "execution/" + processInstanceId + "/localVariables",
-                                Object.class);
-
-                return new ResponseEntity<>(result, HttpStatus.OK);
         }
 
         public Map<String, HashMap<String, HashMap<String, Object>>> CreateJsonOneArgsLong(String valueMap1,

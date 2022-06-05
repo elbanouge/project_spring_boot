@@ -23,6 +23,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import net.sourceforge.tess4j.ITesseract;
@@ -30,6 +31,7 @@ import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 
 @Service
+@Transactional
 public class ImageParseService {
     private static final DecimalFormat df = new DecimalFormat("0.00");
 

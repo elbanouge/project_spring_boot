@@ -1,5 +1,7 @@
 package com.project.request_credit.entities;
 
+import java.util.Date;
+
 import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +20,8 @@ public class Demande {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String decision;
+    private String motif;
+    private Date date;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "id_credit")
