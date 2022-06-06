@@ -13,7 +13,7 @@ public class EmailSenderService {
 
     public boolean sendEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("laylaelhajjaji@gmail.com ");
+        message.setFrom("request.credit22@gmail.com");
         message.setTo(toEmail);
         message.setText(body);
         message.setSubject(subject);
@@ -26,11 +26,11 @@ public class EmailSenderService {
     public boolean sendEmailToAdmin(String fromEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
-        message.setTo("laylaelhajjaji@gmail.com ");
+        message.setTo("request.credit22@gmail.com");
         message.setText(body);
         message.setSubject(subject);
         mailSender.send(message);
-        System.out.println("mail sent to laylaelhajjaji@gmail.com ................");
+        System.out.println("mail sent to request.credit22@gmail.com ................");
         return true;
     }
 
