@@ -124,4 +124,18 @@ public class CreditController {
         List<Credit> aa = creditService.CreditByidUser(u);
         return aa.size();
     }
+
+    @DeleteMapping(value = "deleteCreditClient/{idClient}/{idCredit}")
+    public ResponseEntity<?> deleteCreditClient(@PathVariable long idCredit,@PathVariable long idClient) {
+        System.out.println(idClient+"  "+idCredit);
+        Credit credit = creditService.getCreditById(idCredit);
+        creditService.deleteCredit(idCredit);
+        credit = creditService.getCreditById(idCredit);
+        if(credit==null)
+        {
+            System.out.println("ok");
+            accountService.delete(idClient);
+        }
+        return new ResponseEntity<>("ok", HttpStatus.OK);
+    }
 }
