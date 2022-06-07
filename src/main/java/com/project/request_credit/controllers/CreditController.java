@@ -53,8 +53,8 @@ public class CreditController {
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("'demander le 'dd/MM/yyyy 'a' hh:mm");
         String format = formatter.format(date);
-
         credit.setDate(format);
+
         User user = accountService.findUserByUsername(username);
         if (user != null) {
             credit.setUser(user);

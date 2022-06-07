@@ -115,7 +115,7 @@ public class AccountController {
         }
     }
 
-    @PostMapping({ "createPassword" })
+    @PutMapping({ "createPassword" })
     public ResponseEntity<?> createPassword(@RequestBody PasswordEmail passwordEmail) {
         User userUpdated = accountService.updatePassword(passwordEmail.getPassword(), passwordEmail.getEmail());
         if (userUpdated != null) {

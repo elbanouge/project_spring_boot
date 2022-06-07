@@ -9,6 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,18 +19,18 @@ import org.springframework.web.client.RestTemplate;
 
 import com.project.request_credit.entities.Credit;
 import com.project.request_credit.entities.User;
+import com.project.request_credit.services.AccountService;
 import com.project.request_credit.services.CreditService;
-import com.project.request_credit.services.UserDetailsServiceImpl;
 
 @RestController
 @RequestMapping("/api/process")
 public class ProcessController {
 
         @Autowired
-        private UserDetailsServiceImpl userDetailsService;
+        private CreditService creditService;
 
         @Autowired
-        private CreditService creditService;
+        private AccountService accountService;
 
         static final String URL_CAMUNDA = "http://localhost:8090/engine-rest/";
 
@@ -62,11 +63,14 @@ public class ProcessController {
                 String processInstanceId = (String) resultMap.get("id");
                 System.out.println(processInstanceId);
 
-                User userConnected = userDetailsService.profile();
+                User userConnected = accountService.findUserByUsername(user.getUsername());
+
+                System.out.println("userConnected : " + userConnected);
+
                 List<Credit> credits = creditService.getCreditsByUser(userConnected);
                 if (credits != null) {
                         for (Credit credit : credits) {
-
+                                System.out.println("*****" + credit.toString());
                                 credit.setProcessInstanceId(processInstanceId);
                                 creditService.updateCredit(credit, credit.getId());
                         }
@@ -75,17 +79,20 @@ public class ProcessController {
                 return new ResponseEntity<>(resultMap, HttpStatus.OK);
         }
 
-        @GetMapping({ "info-task-instance" })
+        @GetMapping({ "info-task-instance/{id_user}/{processInstanceId}" })
         @SuppressWarnings("unchecked")
-        public ResponseEntity<?> infoProcess(@RequestParam(required = true) String processInstanceId) {
+        public ResponseEntity<?> infoTaskInstance(@PathVariable(required = true) String id_user,
+                        @PathVariable(required = true) String processInstanceId) {
                 RestTemplate restTemplate = new RestTemplate();
                 List<Map<String, Object>> result = restTemplate.getForObject(URL_CAMUNDA +
                                 "task?processInstanceId=" + processInstanceId,
                                 List.class);
 
                 String taskId = (String) result.get(0).get("id");
+                String taskName = (String) result.get(0).get("name");
+                System.out.println(taskName);
 
-                User userConnected = userDetailsService.profile();
+                User userConnected = accountService.findById(Long.parseLong(id_user));
                 List<Credit> credits = creditService.getCreditsByUser(userConnected);
                 if (credits != null) {
                         for (Credit credit : credits) {

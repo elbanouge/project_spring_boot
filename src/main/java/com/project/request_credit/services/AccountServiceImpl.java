@@ -45,7 +45,7 @@ public class AccountServiceImpl implements AccountService {
     public User createNewUser(User user) {
         User userExist = findUserByUsername(user.getUsername());
         if (userExist == null) {
-            Role userRole = roleRepository.findRoleByName("USER");
+            Role userRole = roleRepository.findRoleByName("CLIENT");
             user.setRoles((Set.of(userRole)));
             user.setStatus("DISABLED");
             user.setPassword(passwordEncoder.encode(user.getPassword()));

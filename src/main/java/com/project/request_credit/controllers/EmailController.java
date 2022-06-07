@@ -10,6 +10,7 @@ import com.project.request_credit.services.AccountService;
 import com.project.request_credit.services.EmailSenderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,8 +33,13 @@ public class EmailController {
         Random rand = new Random();
         int otp = rand.nextInt(999999);
 
+        do {
+            otp = rand.nextInt(999999);
+        } while (String.valueOf(otp).length() < 6);
+
         email.setMessage(email.getMessage() + " " + otp);
-        boolean bool = emailSenderService.sendEmail(email.getEmail(), email.getSubject(), email.getMessage());
+        boolean bool = emailSenderService.sendEmail(email.getEmail(),
+                email.getSubject(), email.getMessage());
         User user = userService.findUserByEmail(email.getEmail());
 
         if (bool == true && user != null) {
@@ -42,18 +48,18 @@ public class EmailController {
             user.setOtpExpiry(new Date());
             userService.updateUser(user);
 
-            return ResponseEntity.ok("Email sent successfully");
+            return new ResponseEntity<>("Email sent successfully", HttpStatus.OK);
         } else
-            return ResponseEntity.badRequest().body("Email not sent");
+            return new ResponseEntity<>("Email not sent", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping({ "sendEmail" })
     public ResponseEntity<?> sendEmail(@RequestBody Email email) {
         boolean bool = emailSenderService.sendEmail(email.getEmail(), email.getSubject(), email.getMessage());
         if (bool)
-            return ResponseEntity.ok("Email sent successfully");
+            return new ResponseEntity<>("Email sent successfully", HttpStatus.OK);
         else
-            return ResponseEntity.badRequest().body("Email not sent");
+            return new ResponseEntity<>("Email not sent", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping({ "verifyOTP/{email}/{otp}" })
@@ -67,13 +73,13 @@ public class EmailController {
                     user.setOtpExpiry(null);
                     user.setStatus("ACTIVE");
                     userService.updateUser(user);
-                    return ResponseEntity.ok("OTP verified successfully");
+                    return new ResponseEntity<>("OTP verified successfully", HttpStatus.OK);
                 } else
-                    return ResponseEntity.badRequest().body("OTP expired");
+                    return new ResponseEntity<>("OTP expired", HttpStatus.BAD_REQUEST);
             } else
-                return ResponseEntity.badRequest().body("OTP not verified");
+                return new ResponseEntity<>("OTP not verified", HttpStatus.BAD_REQUEST);
         } else {
-            return ResponseEntity.badRequest().body("User not found");
+            return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
         }
     }
 }

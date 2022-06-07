@@ -46,8 +46,8 @@ public class CreditService {
         }
     }
 
-    public List<Credit> getCreditsByUser(User id) {
-        return creditRepository.findCreditsByUser(id);
+    public List<Credit> getCreditsByUser(User user) {
+        return creditRepository.findCreditsByUser(user);
     }
 
     public Credit getCreditByUser(User user) {
