@@ -12,6 +12,7 @@ import com.project.request_credit.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,15 +58,18 @@ public class AccountController {
         return accountService.getAllUsers();
     }
 
-    @PostMapping({ "login" })
+    @PostMapping({ "login_app" })
     public ResponseEntity<?> auth(@RequestBody User user) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
         User userFromDb = accountService.findUserByEmail(user.getEmail());
         if (userFromDb != null) {
-            if (userFromDb.getPassword().equals(user.getPassword())) {
+            if (passwordEncoder.matches(user.getPassword(), userFromDb.getPassword())) {
                 return new ResponseEntity<>(userFromDb, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Password is incorrect", HttpStatus.NOT_FOUND);
             }
+            // return new ResponseEntity<>(userFromDb, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }

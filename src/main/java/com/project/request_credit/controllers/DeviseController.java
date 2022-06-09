@@ -2,6 +2,8 @@ package com.project.request_credit.controllers;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -59,11 +61,12 @@ public class DeviseController {
             factor = BigDecimal.valueOf(tauxChange); // 1 MAD = 10.27 CHF
         } else {
             throw new UnknownCurrencyException(
-                    "Unknown 'to' currency: " + toCurrency + ". Must be one of BTC, USD, EUR, JPY, GBP, or CHF.");
+                    "Unknown 'to' currency: " + toCurrency + ". Must be one of USD, EUR, JPY, GBP, or CHF.");
         }
         return factor;
     }
 
+    @SuppressWarnings("unchecked")
     public Float getTauxChange(String currency) {
         HttpHeaders headers = new HttpHeaders();
 
@@ -75,14 +78,21 @@ public class DeviseController {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<String> response = restTemplate.exchange(URL_BASE + "?libDevise=" + currency, HttpMethod.GET,
+        ResponseEntity<?> response = restTemplate.exchange(URL_BASE + "?libDevise=" + currency,
+                HttpMethod.GET,
                 entity,
-                String.class);
+                List.class);
 
-        String result = response.getBody();
+        List<Map<String, Object>> result = (List<Map<String, Object>>) response.getBody();
+
         System.out.println("result: " + result);
-        result = "12.34";
-        return Float.parseFloat(result);
+
+        if (result.isEmpty()) {
+            throw new UnknownCurrencyException(
+                    "Unknown 'to' currency: " + currency + ". Must be one of USD, EUR, JPY, GBP, or CHF.");
+        } else {
+            return Float.parseFloat(result.get(0).get("venteClientele").toString());
+        }
     }
 
 }

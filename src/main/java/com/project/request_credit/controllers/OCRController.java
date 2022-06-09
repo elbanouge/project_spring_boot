@@ -41,19 +41,12 @@ public class OCRController {
 
 	@PostMapping({ "parse" })
 	public ResponseEntity<?> OCR(@RequestParam MultipartFile file, @RequestParam String lang,
-			@RequestParam String id_user, @RequestParam(required = false) Boolean clean) throws IOException,
+			@RequestParam String id_user) throws IOException,
 			TesseractException {
 		try {
 			String res = "";
-			String resPath = "";
-
-			resPath = imageParseService.getPathImage(file);
-
-			if (clean != null && clean == true) {
-				// destination // result
-				resPath = imageParseService.cleanImage(resPath, "result");
-			}
-
+			String resPath = imageParseService.getPathImage(file);
+			// String resPath = imageParseService.cleanImage(path, "result");
 			if (!resPath.equals("Error")) {
 				System.out.println(resPath);
 				OCR ocr = new OCR();
@@ -66,13 +59,30 @@ public class OCRController {
 
 				if (scannerExist != null) {
 					res = imageParseService.saveImageOCR(scannerExist, ocr);
-					return new ResponseEntity<>(res, HttpStatus.OK);
+					// System.out.println(res);
+					ResponseEntity<?> ok = null;
+					boolean recto = resPath.contains("CNIErecto");
+					boolean verso = resPath.contains("CNIEverso");
+					if (recto)
+						ok = OCRNewCINRecto(ocr);
+					if (verso)
+						ok = OCRNewCINVerso(ocr);
+					System.out.println(res);
+					return new ResponseEntity<>(ok, HttpStatus.OK);
 				} else {
 					res = imageParseService.saveImageOCR(newScanner, ocr);
 					if (res.equals("Error")) {
 						return new ResponseEntity<>("Error", HttpStatus.BAD_GATEWAY);
 					} else {
-						return new ResponseEntity<>(res, HttpStatus.OK);
+						ResponseEntity<?> ok = new ResponseEntity("ok", HttpStatus.OK);
+						boolean recto = resPath.contains("CNIErecto");
+						boolean verso = resPath.contains("CNIEverso");
+						if (recto)
+							ok = OCRNewCINRecto(ocr);
+						if (verso)
+							ok = OCRNewCINVerso(ocr);
+						System.out.println(res);
+						return new ResponseEntity<>(ok, HttpStatus.OK);
 					}
 				}
 			} else {
@@ -80,9 +90,57 @@ public class OCRController {
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
+
+	// @PostMapping({ "parse" })
+	// public ResponseEntity<?> OCR(@RequestParam MultipartFile file, @RequestParam
+	// String lang,
+	// @RequestParam String id_user, @RequestParam(required = false) Boolean clean)
+	// throws IOException,
+	// TesseractException {
+	// try {
+	// String res = "";
+	// String resPath = "";
+
+	// resPath = imageParseService.getPathImage(file);
+
+	// if (clean != null && clean == true) {
+	// // destination // result
+	// resPath = imageParseService.cleanImage(resPath, "result");
+	// }
+
+	// if (!resPath.equals("Error")) {
+	// System.out.println(resPath);
+	// OCR ocr = new OCR();
+	// ocr.setId_user(Long.parseLong(id_user.toString()));
+	// ocr.setDestinationLanguage(lang);
+	// ocr.setImage(resPath);
+
+	// Scanner newScanner = new Scanner();
+	// Scanner scannerExist = scannerService.getScannerByUrl(ocr.getImage());
+
+	// if (scannerExist != null) {
+	// res = imageParseService.saveImageOCR(scannerExist, ocr);
+	// return new ResponseEntity<>(res, HttpStatus.OK);
+	// } else {
+	// res = imageParseService.saveImageOCR(newScanner, ocr);
+	// if (res.equals("Error")) {
+	// return new ResponseEntity<>("Error", HttpStatus.BAD_GATEWAY);
+	// } else {
+	// return new ResponseEntity<>(res, HttpStatus.OK);
+	// }
+	// }
+	// } else {
+	// return new ResponseEntity<>("Error", HttpStatus.BAD_GATEWAY);
+	// }
+
+	// } catch (Exception e) {
+	// return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	// }
+	// }
 
 	@PostMapping({ "scan" })
 	public ResponseEntity<?> scan(@RequestParam("file") MultipartFile file) {

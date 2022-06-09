@@ -57,7 +57,6 @@ public class CreditController {
 
         User user = accountService.findUserByUsername(username);
         if (user != null) {
-            credit.setUser(user);
             Credit newCredit = creditService.addCredit(credit, user);
             return new ResponseEntity<>(newCredit, HttpStatus.OK);
         } else {

@@ -24,4 +24,15 @@ public class EmailSenderService {
         return true;
     }
 
+    public boolean sendEmailToAdmin(String fromEmail, String subject, String body) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo("request.credit22@gmail.com");
+        message.setText(body);
+        message.setSubject(subject);
+        mailSender.send(message);
+        System.out.println("Email sent to admin successfully!");
+        return true;
+    }
+
 }

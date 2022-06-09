@@ -11,6 +11,7 @@ import com.project.request_credit.repositories.RoleRepository;
 import com.project.request_credit.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,7 +133,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<User> getAllUsers() {
-        return (List<User>) userRepository.findAll();
+        return userRepository.findAll(Sort.by("id"));
     }
 
     @Override

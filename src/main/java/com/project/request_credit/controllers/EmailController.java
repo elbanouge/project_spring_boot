@@ -82,4 +82,13 @@ public class EmailController {
             return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("sendEmailToAdmin")
+    public ResponseEntity<?> sendEmailToAdmin(@RequestBody Email email) {
+        boolean bool = emailSenderService.sendEmailToAdmin(email.getEmail(), email.getSubject(), email.getMessage());
+        if (bool)
+            return new ResponseEntity<>("Email sent successfully", HttpStatus.OK);
+        else
+            return new ResponseEntity<>("Email not sent", HttpStatus.BAD_REQUEST);
+    }
 }
