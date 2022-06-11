@@ -128,6 +128,7 @@ public class OCRController {
 			return new ResponseEntity<>("Image not found", HttpStatus.NOT_FOUND);
 		} else {
 			User user = accountService.findById(ocr.getId_user());
+			System.out.println(user.getFirstName());
 			if (user == null) {
 				return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
 			} else {
@@ -146,6 +147,7 @@ public class OCRController {
 			return new ResponseEntity<>("Image not found", HttpStatus.NOT_FOUND);
 		} else {
 			User user = accountService.findById(ocr.getId_user());
+			System.out.println(user.getFirstName());
 			if (user == null) {
 				return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
 			} else {

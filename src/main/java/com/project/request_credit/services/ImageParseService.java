@@ -169,11 +169,13 @@ public class ImageParseService {
                 break;
             }
         }
+        System.out.println("line1: "+line1);
+        System.out.println("line2: "+line2);
 
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].toLowerCase().contains("adr") ||
                     lines[i].toLowerCase().contains("dresse") ||
-                    lines[i].toLowerCase().contains("adresse") ) {
+                    lines[i].toLowerCase().contains("adresse") || lines[i].toLowerCase().contains("resse") ) {
 
                 line3 += lines[i];
                 break;
@@ -195,6 +197,7 @@ public class ImageParseService {
 
         if (line2.length() > 0) {
             String[] line2Split = line2.split("<<");
+            for(String ass:line2Split) System.out.println("line2Split:   "+ass);
             nom = line2Split[0];
             prenom = line2Split[1];
             if (nom.contains("<") || nom.contains(">") || prenom.contains("<") || prenom.contains(">")) {
