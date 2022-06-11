@@ -367,7 +367,7 @@ public class ImageParseService {
         }
 
         for (int i = 0; i < lines.length; i++) {
-            if (lines[i].contains("Adresse") || lines[i].contains("Adr") || lines[i].contains("dresse")) {
+            if (lines[i].contains("Adresse") || lines[i].contains("Adr") || lines[i].contains("dresse") || lines[i].contains("resse")) {
                 line2 = lines[i];
                 break;
             }
