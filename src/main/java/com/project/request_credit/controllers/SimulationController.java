@@ -40,9 +40,10 @@ public class SimulationController {
 
         double tm = Math.pow(1 + t, (double) 1 / 12) - 1;
         double c = (a * (Math.pow(1 + tm, n) - 1)) / (Math.pow(1 + tm, n) * tm);
+
         df.setRoundingMode(RoundingMode.UP);
         double cf = Double.parseDouble(df.format(c).split(",")[0]);
-        credit.setCapital(cf);
+        credit.setCapital(cf + 1);
 
         return new ResponseEntity<>(credit, HttpStatus.ACCEPTED);
     }

@@ -34,8 +34,9 @@ public class Credit {
     private String date;
 
     // more fields
-    private String taskId;
     private String processInstanceId;
+    private String taskId;
+    private String taskName;
 
     @JsonIgnoreProperties(value = { "credits", "hibernateLazyInitializer" })
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

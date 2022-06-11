@@ -168,6 +168,7 @@ public class ImageParseService {
             }
         }
 
+        System.out.println(line1);
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].contains("Adr")) {
                 line3 += lines[i];

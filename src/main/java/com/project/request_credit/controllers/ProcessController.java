@@ -96,12 +96,14 @@ public class ProcessController {
                 List<Credit> credits = creditService.getCreditsByUser(userConnected);
                 if (credits != null) {
                         for (Credit credit : credits) {
-
-                                credit.setTaskId(taskId);
-                                creditService.updateCredit(credit, credit.getId());
+                                if (credit.getProcessInstanceId().equals(processInstanceId)) {
+                                        credit.setTaskId(taskId);
+                                        credit.setTaskName(taskName);
+                                        creditService.updateCredit(credit, credit.getId());
+                                }
                         }
                 }
-                return new ResponseEntity<>(result, HttpStatus.OK);
+                return new ResponseEntity<>(taskId + " : " + taskName, HttpStatus.OK);
         }
 
         @PostMapping({ "complete-task-otp-motPass" })
@@ -112,9 +114,9 @@ public class ProcessController {
                                 user.getOtp() + "",
                                 "motPass", user.getPassword());
 
-                restTemplate.postForObject(URL_CAMUNDA + "task/" + taskId + "/complete",
+                Object obj = restTemplate.postForObject(URL_CAMUNDA + "task/" + taskId + "/complete",
                                 variables, Object.class);
-                return new ResponseEntity<>("Task completed successfully", HttpStatus.OK);
+                return new ResponseEntity<>("Task completed successfully " + "\n\n" + obj, HttpStatus.OK);
         }
 
         @PostMapping({ "complete-task-scan-docs" })

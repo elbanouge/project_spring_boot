@@ -7,6 +7,7 @@ import com.project.request_credit.entities.User;
 import com.project.request_credit.repositories.CreditRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,7 @@ public class CreditService {
     }
 
     public List<Credit> getAllCredits() {
-        return (List<Credit>) creditRepository.findAll();
+        return creditRepository.findAll(Sort.by("id"));
     }
 
     public Credit getCreditById(long id) {
@@ -31,9 +32,10 @@ public class CreditService {
     }
 
     public void deleteCredit(long id) {
-        boolean found = creditRepository.existsById(id);
-        if (found == true) {
-            creditRepository.deleteById(id);
+        Credit credit = creditRepository.findById(id).orElse(null);
+        if (credit != null) {
+            credit.setUser(null);
+            creditRepository.delete(credit);
         }
     }
 

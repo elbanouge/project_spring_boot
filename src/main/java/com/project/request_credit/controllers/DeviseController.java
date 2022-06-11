@@ -1,6 +1,5 @@
 package com.project.request_credit.controllers;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -25,40 +24,53 @@ public class DeviseController {
 
     static final String URL_BASE = "https://api.centralbankofmorocco.ma/cours/Version1/api/CoursBBE";
 
-    @GetMapping("/convert")
-    public ConversionResponse convert(@RequestParam(name = "from", defaultValue = "MAD") String fromCurrency,
+    @GetMapping("/convertToDevise")
+    public ConversionResponse convertToDevise(@RequestParam(name = "from", defaultValue = "MAD") String fromCurrency,
             @RequestParam("to") String toCurrency,
-            @RequestParam("amount") BigDecimal amount) {
+            @RequestParam("amount") Double amount) {
 
         if (!fromCurrency.equalsIgnoreCase("MAD")) {
             throw new UnknownCurrencyException("Unknown 'from' currency: " + fromCurrency + ", only MAD supported.");
         }
-        BigDecimal factor = conversionFactorFor(toCurrency);
-        return new ConversionResponse(toCurrency, factor.multiply(amount));
+
+        Double factor = conversionFactorFor(toCurrency);
+        Double converted = amount / factor;
+        return new ConversionResponse(toCurrency, converted);
     }
 
-    private BigDecimal conversionFactorFor(String toCurrency) {
-        BigDecimal factor;
+    @GetMapping("/convertToMAD")
+    public ConversionResponse convertToMad(@RequestParam(name = "to", defaultValue = "MAD") String toCurrency,
+            @RequestParam("from") String fromCurrency,
+            @RequestParam("amount") Double amount) {
+
+        if (!toCurrency.equalsIgnoreCase("MAD")) {
+            throw new UnknownCurrencyException("Unknown 'from' currency: " + fromCurrency + ", only MAD supported.");
+        }
+
+        Double factor = conversionFactorFor(fromCurrency);
+        Double converted = amount * factor;
+        return new ConversionResponse(fromCurrency, converted);
+    }
+
+    private Double conversionFactorFor(String toCurrency) {
+        Double factor;
         Float tauxChange = 0.0f;
 
-        if (toCurrency.equalsIgnoreCase("BTC")) {
-            tauxChange = getTauxChange("BTC");
-            factor = BigDecimal.valueOf(tauxChange); // 1 MAD = 294811.87 BTC
-        } else if (toCurrency.equalsIgnoreCase("USD")) {
+        if (toCurrency.equalsIgnoreCase("USD")) {
             tauxChange = getTauxChange("USD");
-            factor = BigDecimal.valueOf(tauxChange);// 1 MAD = 9.88 USD
+            factor = Double.valueOf(tauxChange);// 1 USD = 9.88 MAD
         } else if (toCurrency.equalsIgnoreCase("EUR")) {
             tauxChange = getTauxChange("EUR");
-            factor = BigDecimal.valueOf(tauxChange); // 1 MAD = 10.59 EUR
+            factor = Double.valueOf(tauxChange); // 1 EUR = 10.59 MAD
         } else if (toCurrency.equalsIgnoreCase("JPY")) {
             tauxChange = getTauxChange("JPY");
-            factor = BigDecimal.valueOf(tauxChange); // 1 MAD = 0.075 JPY
+            factor = Double.valueOf(tauxChange); // 1 JPY = 0.075 MAD
         } else if (toCurrency.equalsIgnoreCase("GBP")) {
             tauxChange = getTauxChange("GBP");
-            factor = BigDecimal.valueOf(tauxChange); // 1 MAD = 12.34 GBP
+            factor = Double.valueOf(tauxChange); // 1 GBP = 12.34 MAD
         } else if (toCurrency.equalsIgnoreCase("CHF")) {
             tauxChange = getTauxChange("CHF");
-            factor = BigDecimal.valueOf(tauxChange); // 1 MAD = 10.27 CHF
+            factor = Double.valueOf(tauxChange); // 1 CHF = 10.27 MAD
         } else {
             throw new UnknownCurrencyException(
                     "Unknown 'to' currency: " + toCurrency + ". Must be one of USD, EUR, JPY, GBP, or CHF.");
@@ -91,6 +103,7 @@ public class DeviseController {
             throw new UnknownCurrencyException(
                     "Unknown 'to' currency: " + currency + ". Must be one of USD, EUR, JPY, GBP, or CHF.");
         } else {
+            System.out.println("****** 1 " + currency + " = " + result.get(0).get("venteClientele") + " MAD");
             return Float.parseFloat(result.get(0).get("venteClientele").toString());
         }
     }
