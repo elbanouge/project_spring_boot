@@ -114,9 +114,9 @@ public class ProcessController {
                                 user.getOtp() + "",
                                 "motPass", user.getPassword());
 
-                Object obj = restTemplate.postForObject(URL_CAMUNDA + "task/" + taskId + "/complete",
+                restTemplate.postForObject(URL_CAMUNDA + "task/" + taskId + "/complete",
                                 variables, Object.class);
-                return new ResponseEntity<>("Task completed successfully " + "\n\n" + obj, HttpStatus.OK);
+                return new ResponseEntity<>("Task completed successfully ", HttpStatus.OK);
         }
 
         @PostMapping({ "complete-task-scan-docs" })
